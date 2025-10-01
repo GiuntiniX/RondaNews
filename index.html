@@ -42,6 +42,7 @@
         .category-tab { border-bottom: 3px solid transparent; }
         .category-followed-text { color: #60a5fa !important; }
         .category-priority-text { color: #f59e0b !important; font-weight: 700; }
+        .source-logo { max-height: 18px; width: auto; filter: grayscale(1) brightness(1.8); opacity: 0.8; }
     </style>
 </head>
 <body class="text-slate-200 antialiased">
@@ -65,7 +66,7 @@
         <header class="text-center mb-6 relative">
             <div class="flex justify-center items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h6M7 8h6" />
                 </svg>
                 <h1 class="text-2xl md:text-4xl font-bold text-cyan-400">Ronda de Notícias</h1>
             </div>
@@ -296,8 +297,19 @@
         'Outros': { border: 'border-gray-500', tagBg: 'bg-gray-500/10', tagText: 'text-gray-400' },
         'Todas': { border: 'border-cyan-500', tagBg: 'bg-cyan-500/10', tagText: 'text-cyan-400' }
     };
-    const PORTAL_LOGOS = { "G1": "g1.globo.com", "UOL": "uol.com.br", "Folha": "folha.uol.com.br", "Estadão": "estadao.com.br", "Poder360": "poder360.com.br", "CNN": "cnnbrasil.com.br", "Metrópoles": "metropoles.com", "GE": "ge.globo.com", "Valor": "valor.globo.com", "Terra": "terra.com.br" };
-    
+    const SOURCE_LOGOS_URL = {
+        "g1.globo.com": "https://s.glbimg.com/bu/i/fc/500/g1.png",
+        "uol.com.br": "https://logospng.org/download/uol/logo-uol-2048.png",
+        "folha.uol.com.br": "https://logodownload.org/wp-content/uploads/2014/08/folha-de-s-paulo-logo-0.png",
+        "estadao.com.br": "https://logospng.org/download/estadao/logo-estadao-4096.png",
+        "poder360.com.br": "https://static.poder360.com.br/2021/01/logo-Poder360-nova-550x210-1.png",
+        "cnnbrasil.com.br": "https://logodownload.org/wp-content/uploads/2020/03/cnn-brasil-logo-0.png",
+        "metropoles.com": "https://logospng.org/download/metropoles/logo-metropoles-2048.png",
+        "ge.globo.com": "https://s.glbimg.com/bu/i/fc/500/ge.png",
+        "valor.globo.com": "https://s2.glbimg.com/3933AcY6A66_PQ_ko_eN5Id2Plk=/trim/620x0/i.s3.glbimg.com/v1/AUTH_63b422c2caee4269b8b34177e8876b93/internal_photos/bs/2022/Y/q/qA42b8S5e2V376T4Wf2A/valor-economico-logo.png",
+        "terra.com.br": "https://logospng.org/download/terra/logo-terra-2048.png"
+    };
+
     // --- FUNÇÕES DE ANÁLISE DE CONTEÚDO E UTILIDADE ---
     function extractEntities(title) { const words = title.split(' '); const entities = words.filter((word, index) => index > 0 && word.length > 3 && word[0] === word[0].toUpperCase() && isNaN(word)); return [...new Set(entities)]; }
     function determineMediaType(title, url) { const urlLower = url.toLowerCase(); const titleLower = title.toLowerCase(); if (titleLower.includes('galeria') || titleLower.includes('fotos') || titleLower.includes('imagens') || titleLower.includes('infográfico')) return 'imagem'; if (titleLower.includes('vídeo') || titleLower.includes('assista') || titleLower.includes('live') || titleLower.includes('ao vivo') || titleLower.includes('tv')) return 'video'; if (titleLower.includes('podcast') || titleLower.includes('áudio') || titleLower.includes('ouça') || titleLower.includes('cast')) return 'podcast'; if (urlLower.includes('youtube.com') || urlLower.includes('vimeo.com') || urlLower.includes('/videos/') || urlLower.includes('/tv/') || urlLower.includes('globo.com/videos/')) return 'video'; if (urlLower.includes('soundcloud.com') || urlLower.includes('/podcasts/') || urlLower.includes('g1.globo.com/podcast')) return 'podcast'; return 'texto'; }
@@ -315,15 +327,11 @@
 
     // --- FUNÇÃO DE FETCH ---
     async function fetchFromGoogleNewsAPI(query = null) {
-        // Se o usuário buscar por algo, avisamos que a busca está desativada nesta versão.
         if (query) {
             console.log("A busca manual está desativada na versão com Google Sheets.");
             showToast("A busca está desativada. Exibindo histórico geral.");
         }
-
-        // ▼▼▼ URL DO SEU ROBÔ (APP DA WEB) ▼▼▼
         const roboApiUrl = "https://script.google.com/macros/s/AKfycbzecqRjk8trLq2EZ6h-jZJN8C6t92PbWbhSfxdzcLxT7HSUZgTnn5nO1on1Y3uf4sd8kw/exec";
-
         try {
             const response = await fetch(roboApiUrl);
             if (!response.ok) {
@@ -332,7 +340,6 @@
                 return [];
             }
             const data = await response.json();
-            // Os dados já vêm no formato que o resto do código espera.
             return data;
         } catch (error) {
             console.error("Falha grave na comunicação com a API: ", error);
@@ -348,15 +355,12 @@
     
     function renderRadarResults(append = false) { 
         if (!append) { resultsContainer.innerHTML = ''; currentPage = 1; } 
-        
         let filteredNews = masterNewsCache;
         filteredNews = applyDateFilter(filteredNews, currentDateFilter);
         filteredNews = applyMediaFilter(filteredNews, currentMediaFilter);
-
         if (currentCategorySearch && currentCategorySearch !== 'Todas') {
             filteredNews = filteredNews.filter(news => news.category === currentCategorySearch);
         }
-
         if (currentRadarView === 'paraSi' && currentAppView === 'radar') { 
             if (followedTopics.length === 0) { 
                 messageState.classList.remove('hidden'); 
@@ -370,12 +374,10 @@
             const getPriority = (category) => { const followed = followedTopics.find(t => t.topic === category); return followed ? followed.priority : 0; }; 
             filteredNews.sort((a, b) => getPriority(b.category) - getPriority(a.category)); 
         } 
-
         const totalItems = filteredNews.length; 
         const startIndex = (currentPage - 1) * itemsPerPage; 
         const endIndex = startIndex + itemsPerPage; 
         const paginatedItems = filteredNews.slice(startIndex, endIndex); 
-        
         if (paginatedItems.length === 0 && currentPage === 1) { 
             messageState.classList.remove('hidden'); 
             messageTitle.textContent = 'Nenhuma notícia encontrada.'; 
@@ -383,9 +385,7 @@
             contentCounter.textContent = ''; 
             return; 
         } 
-        
         messageState.classList.add('hidden'); 
-        
         paginatedItems.forEach((item, index) => { 
             const card = createGoogleNewsCard(item); 
             if (currentPage === 1 && index === 0 && !searchInput.value.trim() && currentRadarView === 'geral' && currentAppView === 'radar') { 
@@ -393,7 +393,6 @@
             } 
             resultsContainer.appendChild(card); 
         }); 
-        
         contentCounter.textContent = `Exibindo ${resultsContainer.children.length} de ${totalItems} notícias.`; 
         isLoadingMore = false; 
     }
@@ -402,7 +401,6 @@
         const newsElement = document.createElement('article');
         const primaryCategory = news.category === 'Geral' ? 'Outros' : news.category; 
         const colors = categoryColorMap[primaryCategory] || categoryColorMap['Outros'];
-        
         const newsDateTime = new Date(news.timestamp);
         const fullDateTime = `${newsDateTime.toLocaleDateString('pt-BR')} ${newsDateTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
         const logoUrl = `https://www.google.com/s2/favicons?domain=${news.sourceDomain}&sz=64`;
@@ -415,29 +413,61 @@
         const mediaTag = `<span class="text-lg text-slate-300 ml-1 has-tooltip" data-tooltip="${mediaInfo.label}">${mediaInfo.emoji}</span>`;
         const entities = extractEntities(news.title);
         const entitiesHTML = entities.length > 0 ? `<div class="flex flex-wrap gap-1 mt-3">${entities.map(e => `<span class="entity-tag">${e}</span>`).join('')}</div>` : '';
-        
         const borderColorClass = colors.border;
         const categoryHTML = `<span class="text-xs font-medium ${colors.tagBg} ${colors.tagText} px-2 py-1 rounded-full">${primaryCategory}</span>`;
+        const sourceLogoUrl = SOURCE_LOGOS_URL[news.sourceDomain];
+        const logoHTML = sourceLogoUrl ? `<div class="source-logo-container"><img src="${sourceLogoUrl}" alt="${news.sourceName}" class="source-logo"></div>` : '';
 
         newsElement.className = `bg-slate-800 border-l-4 ${borderColorClass} rounded-r-lg p-5 shadow-lg flex flex-col transform hover:scale-[1.01] transition-transform duration-300`;
-        newsElement.innerHTML = `<div class="flex justify-between items-start gap-2"><a href="${news.url}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 min-w-0"><img src="${logoUrl}" alt="Logo" class="flex-shrink-0 w-6 h-6 rounded-md" onerror="this.outerHTML = \`${fallbackSvg}\`"><p class="font-semibold text-slate-100 truncate" title="${news.sourceName}">${news.sourceName}</p></a><button class="add-to-ronda-btn" data-url="${news.url}" aria-label="Adicionar à Ronda">${saveButtonIcon}</button></div><div><a href="${news.url}" target="_blank" rel="noopener noreferrer"><p class="text-slate-300 font-semibold leading-relaxed my-2 news-title">${finalTitle} ${mediaTag}</p></a>${entitiesHTML}</div><div class="flex items-center justify-between text-sm mt-auto pt-4 border-t border-slate-700/50">${categoryHTML}<span class="text-xs text-slate-500">${fullDateTime}</span></div>`;
+        newsElement.innerHTML = `
+            <div class="flex justify-between items-start gap-2">
+                <a href="${news.url}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 min-w-0">
+                    <img src="${logoUrl}" alt="Logo" class="flex-shrink-0 w-6 h-6 rounded-md" onerror="this.outerHTML = \`${fallbackSvg}\`">
+                    <p class="font-semibold text-slate-100 truncate" title="${news.sourceName}">${news.sourceName}</p>
+                </a>
+                <button class="add-to-ronda-btn" data-url="${news.url}" aria-label="Adicionar à Ronda">${saveButtonIcon}</button>
+            </div>
+            <div>
+                <a href="${news.url}" target="_blank" rel="noopener noreferrer">
+                    <p class="text-slate-300 font-semibold leading-relaxed my-2 news-title">${finalTitle} ${mediaTag}</p>
+                </a>
+                ${entitiesHTML}
+            </div>
+            <div class="flex items-center justify-between text-sm mt-auto pt-4 border-t border-slate-700/50">
+                ${categoryHTML}
+                <div class="flex items-center gap-4">
+                    ${logoHTML}
+                    <span class="text-xs text-slate-500">${fullDateTime}</span>
+                </div>
+            </div>`;
         return newsElement;
     }
 
     // --- LÓGICA DE INTERFACE E UTILITÁRIOS ---
     function handleDateFilterChange(filterKey, buttonElement) { currentDateFilter = filterKey; dateFilterContainer.querySelectorAll('button').forEach(btn => { btn.classList.remove('date-filter-active'); btn.setAttribute('aria-pressed', 'false'); btn.classList.add('text-slate-300', 'hover:bg-slate-700'); }); buttonElement.classList.add('date-filter-active'); buttonElement.classList.remove('text-slate-300', 'hover:bg-slate-700'); buttonElement.setAttribute('aria-pressed', 'true'); renderRadarResults(); }
-    const applyDateFilter = (items, filterKey) => { const today = new Date(); today.setHours(0, 0, 0, 0); const filterFn = { 'hoje': (item) => new Date(item.timestamp) >= today, 'ultima_semana': (item) => { const sevenDaysAgo = new Date(today); sevenDaysAgo.setDate(today.getDate() - 7); const itemDate = new Date(item.timestamp); return itemDate >= sevenDaysAgo; } }; return items.filter(filterFn[filterKey] || (() => true)); };
+    const applyDateFilter = (items, filterKey) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const filterFn = {
+            'hoje': (item) => new Date(item.timestamp) >= today,
+            'ultima_semana': (item) => {
+                const sevenDaysAgo = new Date(today);
+                sevenDaysAgo.setDate(today.getDate() - 7);
+                const itemDate = new Date(item.timestamp);
+                return itemDate >= sevenDaysAgo && itemDate < today; // <-- LÓGICA AJUSTADA AQUI
+            }
+        };
+        return items.filter(filterFn[filterKey] || (() => true));
+    };
     
     function renderCategories() {
         categoriesContainer.innerHTML = '';
         const tabsContainer = document.createElement('div');
         tabsContainer.className = 'flex items-center gap-4 overflow-x-auto category-tabs-container pt-2';
-        
         const createTab = (category) => {
             const tabButton = document.createElement('button');
             const colors = categoryColorMap[category] || categoryColorMap['Outros'];
             let tabClasses = 'category-tab text-sm font-semibold py-2 px-1 whitespace-nowrap transition-colors duration-200';
-
             if (currentRadarView === 'paraSi') {
                 const followedTopic = followedTopics.find(t => t.topic === category);
                 if (followedTopic) {
@@ -445,7 +475,7 @@
                 } else {
                     tabClasses += ' text-slate-400 hover:text-white';
                 }
-            } else { // 'geral' view
+            } else {
                 const isActive = (currentCategorySearch === category) || (category === 'Todas' && currentCategorySearch === null);
                 if (isActive) {
                     tabClasses += ` ${colors.border.replace('border-', 'border-b-')} text-slate-100`;
@@ -453,11 +483,9 @@
                     tabClasses += ` ${colors.tagText} hover:text-slate-200`;
                 }
             }
-            
             tabButton.className = tabClasses;
             tabButton.textContent = category;
             tabButton.dataset.category = category;
-            
             tabButton.onclick = () => {
                 if (currentRadarView === 'paraSi') {
                     const topicIndex = followedTopics.findIndex(t => t.topic === category);
@@ -479,11 +507,9 @@
             };
             return tabButton;
         };
-        
         tabsContainer.appendChild(createTab('Todas'));
         mainCategories.forEach(category => tabsContainer.appendChild(createTab(category)));
         categoriesContainer.appendChild(tabsContainer);
-
         clearFollowedBtn.classList.toggle('hidden', !(currentRadarView === 'paraSi' && followedTopics.length > 0));
     }
 
@@ -505,10 +531,7 @@
     }
     
     async function handleSearch(queryValue, category = null) { 
-        // A busca no frontend é desabilitada, pois a API agora traz todos os dados.
-        // A busca teria que ser implementada no lado do robô (Apps Script).
         showToast("A busca está temporariamente desativada.");
-        // Apenas recarregamos os dados gerais.
         loadInitialContent();
     }
     
@@ -561,9 +584,6 @@
         updateMediaDropdown(currentMediaFilter);
         loadInitialContent().then(() => setView(currentAppView));
         
-        // O auto-refresh do frontend foi removido, pois agora os dados são sempre os mais recentes da planilha.
-        // O botão de refresh manual continua funcionando para buscar os dados mais atuais do robô.
-
         mediaFilterButton.addEventListener('click', (e) => { e.stopPropagation(); const isExpanded = mediaFilterButton.getAttribute('aria-expanded') === 'true'; mediaFilterButton.setAttribute('aria-expanded', !isExpanded); mediaDropdownMenu.classList.toggle('hidden', isExpanded); mediaDropdownIcon.classList.toggle('rotate-180', !isExpanded); });
         mediaDropdownMenu.querySelectorAll('button').forEach(button => button.addEventListener('click', (e) => handleMediaFilterChange(e.currentTarget.getAttribute('data-media-key'))));
         document.addEventListener('click', (e) => { if (mediaFilterDropdown && !mediaFilterDropdown.contains(e.target)) { mediaDropdownMenu.classList.add('hidden'); mediaFilterButton.setAttribute('aria-expanded', 'false'); mediaDropdownIcon.classList.remove('rotate-180'); } });
