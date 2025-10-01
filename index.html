@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radar de Notícias</title>
+    <title>Ronda de Notícias</title>
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/GiuntiniX/RadarNews/main/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -50,12 +50,11 @@
         <button id="closeWelcomeBannerBtn" type="button" aria-label="Fechar" class="absolute top-2 right-2 text-slate-400 hover:text-white transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
-        <h3 class="font-bold text-cyan-400 mb-3 text-base">Bem-vindo ao Radar de Notícias!</h3>
+        <h3 class="font-bold text-cyan-400 mb-3 text-base">Bem-vindo ao Ronda de Notícias!</h3>
         <p class="text-sm text-slate-300 mb-3">Conheça as seções principais no menu de navegação:</p>
         <ul class="space-y-3 text-sm text-slate-300 list-inside">
             <li><b>Últimas Notícias:</b> Feed principal com tudo de mais recente.</li>
             <li><b>Meu Radar:</b> Acompanhe apenas os tópicos que você segue.</li>
-            <li><b>Cobertura da Mídia:</b> Análise de pautas e veículos.</li>
             <li><b>Minhas Rondas:</b> Organize suas apurações.</li>
         </ul>
         <p class="text-xs text-slate-400 mt-4 pt-2 border-t border-slate-600/50">Dica: A ferramenta busca por novas matérias a cada 20 minutos e te notifica aqui!</p>
@@ -65,8 +64,10 @@
         
         <header class="text-center mb-6 relative">
             <div class="flex justify-center items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke-opacity="0.4"></circle><circle cx="12" cy="12" r="6" stroke-opacity="0.4"></circle><circle cx="12" cy="12" r="2"></circle><path stroke-linecap="round" stroke-linejoin="round" d="M12 2v10l-4 4"></path></svg>
-                <h1 class="text-2xl md:text-4xl font-bold text-cyan-400">Radar de Notícias</h1>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <h1 class="text-2xl md:text-4xl font-bold text-cyan-400">Ronda de Notícias</h1>
             </div>
             <p class="text-slate-400 mt-2">A velocidade da informação ao seu alcance.</p>
             <p class="text-sm text-slate-500 mt-1">
@@ -87,7 +88,6 @@
                 <div id="mainViewTabs" class="flex justify-start md:justify-center bg-slate-700/50 p-1 rounded-lg w-full overflow-x-auto whitespace-nowrap">
                     <button id="viewFilterRadar" class="view-filter-active text-white px-4 py-1.5 rounded-md text-sm font-semibold transition-colors duration-200 flex items-center gap-1.5" aria-pressed="true"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h6M7 8h6" /></svg>Últimas Notícias</button>
                     <button id="viewFilterForYou" class="text-slate-300 hover:bg-slate-600/50 px-4 py-1.5 rounded-md text-sm font-semibold transition-colors duration-200 flex items-center gap-1.5" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z" /></svg>Meu Radar</button>
-                    <button id="viewFilterAggregate" class="text-slate-300 hover:bg-slate-600/50 px-4 py-1.5 rounded-md text-sm font-semibold transition-colors duration-200 flex items-center gap-1.5" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>Cobertura da Mídia</button>
                     <button id="rondasBtn" aria-label="Abrir Minhas Rondas" class="text-slate-300 hover:bg-slate-600/50 px-4 py-1.5 rounded-md text-sm font-semibold transition-colors duration-200 flex items-center gap-2 relative">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
                         Minhas Rondas
@@ -123,8 +123,8 @@
                     <div id="contentCounter" class="text-sm text-slate-400 mb-4 h-5"></div>
                     <div class="mb-8 bg-slate-800 rounded-xl p-4 border border-slate-700">
                         <div class="flex justify-between items-center mb-2">
-                             <h2 class="text-lg font-bold text-cyan-400">Navegue por Editorial</h2>
-                             <button id="clearFollowedBtn" class="hidden text-xs text-red-400 hover:text-red-300 font-semibold transition-colors duration-200">Limpar Tópicos</button>
+                            <h2 class="text-lg font-bold text-cyan-400">Navegue por Editorial</h2>
+                            <button id="clearFollowedBtn" class="hidden text-xs text-red-400 hover:text-red-300 font-semibold transition-colors duration-200">Limpar Tópicos</button>
                         </div>
                         <div id="categoriesContainer" class="border-t border-slate-700">
                         </div>
@@ -132,39 +132,6 @@
                     <main id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></main>
                     <div id="messageState" class="hidden text-center py-16"><svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-slate-600 mb-4"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg><h3 id="messageTitle" class="text-xl font-semibold text-slate-300">Nenhum resultado</h3><p id="messageText" class="text-slate-500">Tente um termo diferente.</p></div>
                 </div>
-            </div>
-        </div>
-        
-        <div id="aggregateContainer" class="hidden">
-            <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold text-cyan-400">Análise de Cobertura</h2>
-                    <p class="text-slate-400">Compare as pautas entre os veículos ou por assunto.</p>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="flex bg-slate-700/50 p-1 rounded-lg">
-                        <button id="aggViewPortalBtn" class="agg-view-btn-active text-white px-3 py-1.5 rounded-md text-sm font-semibold transition-colors duration-200">Visão por Portal</button>
-                        <button id="aggViewTopicBtn" class="text-slate-300 hover:bg-slate-600/50 px-3 py-1.5 rounded-md text-sm font-semibold transition-colors duration-200">Visão por Assunto</button>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button id="refreshAggregateBtn" aria-label="Atualizar cobertura" class="text-slate-300 text-sm font-semibold p-2 rounded-lg transition-colors duration-200 bg-slate-700/50 hover:bg-slate-700 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-500"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-                        </button>
-                            <div id="aggregate-last-updated" class="text-sm text-slate-500 text-right flex-shrink-0"></div>
-                    </div>
-                </div>
-            </div>
-            <div id="portalsPanelContainerWrapper" class="relative group">
-                 <button id="scrollPortalsLeft" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-slate-800/80 backdrop-blur-sm hover:bg-slate-700/80 rounded-full p-2 transition-opacity opacity-0 group-hover:opacity-100 disabled:opacity-0 disabled:cursor-not-allowed">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
-                </button>
-                <div id="portalsPanelContainer" class="portal-column-container"></div>
-                <button id="scrollPortalsRight" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-slate-800/80 backdrop-blur-sm hover:bg-slate-700/80 rounded-full p-2 transition-opacity opacity-0 group-hover:opacity-100 disabled:opacity-0 disabled:cursor-not-allowed">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-                </button>
-            </div>
-            <div id="trendingTopicsContainerWrapper" class="hidden">
-                 <div id="trendingTopicsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
             </div>
         </div>
 
@@ -213,20 +180,6 @@
         </div>
     </div>
 
-    <div id="topicDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-800 rounded-xl border border-slate-700 shadow-lg w-full max-w-2xl max-h-[80vh] flex flex-col">
-            <header class="flex items-center justify-between p-4 border-b border-slate-700 flex-shrink-0">
-                <h2 id="topicDetailTitle" class="text-lg font-bold text-cyan-400 truncate pr-4">Detalhes do Assunto</h2>
-                <button id="closeTopicDetailModalBtn" aria-label="Fechar">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400 hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-            </header>
-            <div class="flex-grow p-4 overflow-y-auto" id="topicDetailContent">
-                </div>
-        </div>
-    </div>
-
-
     <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-transform duration-300"><p id="toastMessage"></p></div>
     <button id="backToTopBtn" aria-label="Voltar ao topo" class="hidden fixed bottom-5 right-5 bg-cyan-500 hover:bg-cyan-600 text-white p-3 rounded-full shadow-lg opacity-0 transform translate-y-20"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" /></svg></button>
     
@@ -269,10 +222,8 @@
     const toastMessage = document.getElementById('toastMessage');
     const searchBarWrapper = document.getElementById('searchBarWrapper');
     const radarContainer = document.getElementById('radarContainer');
-    const aggregateContainer = document.getElementById('aggregateContainer');
     const viewFilterRadar = document.getElementById('viewFilterRadar');
     const viewFilterForYou = document.getElementById('viewFilterForYou');
-    const viewFilterAggregate = document.getElementById('viewFilterAggregate');
     const dateFilterContainer = document.getElementById('dateFilterContainer');
     const dateFilterToday = document.getElementById('dateFilterToday');
     const dateFilterLastWeek = document.getElementById('dateFilterLastWeek');
@@ -295,14 +246,6 @@
     const newRondaInput = document.getElementById('newRondaInput');
     const addRondaBtn = document.getElementById('addRondaBtn');
     const rondasContent = document.getElementById('rondasContent');
-    const portalsPanelContainerWrapper = document.getElementById('portalsPanelContainerWrapper');
-    const trendingTopicsContainerWrapper = document.getElementById('trendingTopicsContainerWrapper');
-    const portalsPanelContainer = document.getElementById('portalsPanelContainer');
-    const trendingTopicsContainer = document.getElementById('trendingTopicsContainer');
-    const aggregateLastUpdated = document.getElementById('aggregate-last-updated');
-    const aggViewPortalBtn = document.getElementById('aggViewPortalBtn');
-    const aggViewTopicBtn = document.getElementById('aggViewTopicBtn');
-    const refreshAggregateBtn = document.getElementById('refreshAggregateBtn');
     const rondaInfoModal = document.getElementById('rondaInfoModal');
     const closeRondaInfoBtn = document.getElementById('closeRondaInfoBtn');
     const welcomeBanner = document.getElementById('welcomeBanner');
@@ -311,12 +254,6 @@
     const helpButton = document.getElementById('helpButton');
     const helpModal = document.getElementById('helpModal');
     const closeHelpModalBtn = document.getElementById('closeHelpModalBtn');
-    const topicDetailModal = document.getElementById('topicDetailModal');
-    const topicDetailTitle = document.getElementById('topicDetailTitle');
-    const topicDetailContent = document.getElementById('topicDetailContent');
-    const closeTopicDetailModalBtn = document.getElementById('closeTopicDetailModalBtn');
-    const scrollPortalsLeft = document.getElementById('scrollPortalsLeft');
-    const scrollPortalsRight = document.getElementById('scrollPortalsRight');
 
     // --- APP STATE --- 
     let currentAppView = 'radar';
@@ -330,9 +267,7 @@
     const itemsPerPage = 20;
     let isLoadingMore = false;
     let currentCategorySearch = null;
-    let currentAggregateView = 'portal';
     let newsHoldingPen = [];
-    let trendingTopicsDataMap = new Map();
 
     // --- CONSTANTS & CONFIGS ---
     const mainCategories = ['Política', 'Economia', 'Mundo', 'Cidades', 'Saúde', 'Educação', 'Ciência', 'Meio Ambiente', 'Esportes', 'Cultura', 'Entretenimento', 'Viagem', 'Gastronomia', 'Carros'];
@@ -584,7 +519,7 @@
     
     function setView(view) { 
         currentAppView = view; 
-        [viewFilterRadar, viewFilterForYou, viewFilterAggregate].forEach(btn => { 
+        [viewFilterRadar, viewFilterForYou].forEach(btn => { 
             btn.classList.remove('view-filter-active'); 
             btn.classList.add('text-slate-300', 'hover:bg-slate-600/50'); 
             btn.setAttribute('aria-pressed', 'false'); 
@@ -599,7 +534,6 @@
         
         if (view === 'radar') { 
             radarContainer.classList.remove('hidden'); 
-            aggregateContainer.classList.add('hidden'); 
             if (currentRadarView === 'geral') { 
                 viewFilterRadar.classList.add('view-filter-active'); 
                 viewFilterRadar.setAttribute('aria-pressed', 'true'); 
@@ -608,15 +542,6 @@
                 viewFilterForYou.setAttribute('aria-pressed', 'true'); 
             } 
             handleCategoryFilter(currentCategorySearch);
-        } else if (view === 'aggregate') { 
-            radarContainer.classList.add('hidden'); 
-            aggregateContainer.classList.remove('hidden'); 
-            viewFilterAggregate.classList.add('view-filter-active'); 
-            viewFilterAggregate.setAttribute('aria-pressed', 'true'); 
-            searchBarWrapper.style.display = 'none'; 
-            secondaryFilters.style.display = 'none'; 
-            categoriesSection.classList.add('hidden'); 
-            setupAggregateView(); 
         } 
         
         renderCategories(); 
@@ -628,95 +553,6 @@
     function exportToXLSX(rondaIndex) { const ronda = rondas[rondaIndex]; if (!ronda || ronda.news.length === 0) { showToast('Ronda vazia.'); return; } const dataToExport = ronda.news.map(item => ({ 'Título': item.title, 'URL': item.url, 'Fonte': item.sourceName, 'Data': new Date(item.timestamp).toLocaleString('pt-BR'), 'Anotação': item.note || '' })); const worksheet = XLSX.utils.json_to_sheet(dataToExport); const workbook = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(workbook, worksheet, "Ronda"); XLSX.writeFile(workbook, `${ronda.name.replace(/\s+/g, '_')}.xlsx`); showToast(`Ronda "${ronda.name}" exportada!`); }
     function exportAllRondasToXLSX() { if (rondas.length === 0) { showToast("Nenhuma ronda para exportar."); return; } const workbook = XLSX.utils.book_new(); rondas.forEach(ronda => { if (ronda.news.length > 0) { const dataToExport = ronda.news.map(item => ({ 'Título': item.title, 'URL': item.url, 'Fonte': item.sourceName, 'Data': new Date(item.timestamp).toLocaleString('pt-BR'), 'Anotação': item.note || '' })); const worksheet = XLSX.utils.json_to_sheet(dataToExport); const sheetName = ronda.name.replace(/[\\/*?\[\]]/g, '').substring(0, 31); XLSX.utils.book_append_sheet(workbook, worksheet, sheetName); } }); if (workbook.SheetNames.length === 0) { showToast("Todas as rondas estão vazias."); return; } XLSX.writeFile(workbook, `Minhas_Rondas_${new Date().toISOString().split('T')[0]}.xlsx`); }
     
-    // --- LÓGICA DA "COBERTURA DA MÍDIA" ---
-    async function setupAggregateView() { if (currentAggregateView === 'portal') { await renderPortalsPanel(); } else { renderTrendingTopicsView(); } const updateTime = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); aggregateLastUpdated.innerHTML = `Verificado às: <strong>${updateTime}</strong>`; }
-    async function renderPortalsPanel() {
-        portalsPanelContainer.innerHTML = `<p class="text-center text-slate-400 col-span-full animate-pulse">Buscando manchetes...</p>`;
-        // Na nova versão, os dados já estão no masterNewsCache, não precisamos buscar de novo.
-        const portalData = masterNewsCache.reduce((acc, news) => {
-            const portalName = Object.keys(PORTAL_LOGOS).find(key => PORTAL_LOGOS[key] === news.sourceDomain);
-            if (portalName) {
-                if (!acc[portalName]) acc[portalName] = [];
-                acc[portalName].push(news);
-            }
-            return acc;
-        }, {});
-
-        portalsPanelContainer.innerHTML = '';
-        for (const portal in portalData) {
-            const portalNews = portalData[portal].slice(0, 10); // Limita a 10 notícias por portal
-            if (portalNews.length === 0) continue;
-            const logo = `https://www.google.com/s2/favicons?domain=${portalNews[0].sourceDomain}&sz=32`;
-            const itemsHTML = portalNews.map((item, index) => {
-                const isLead = index === 0;
-                const time = new Date(item.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                return `<a href="${item.url}" target="_blank" rel="noopener noreferrer" class="block border-t border-slate-700/50 pt-2 mt-2 hover:bg-slate-700/50 p-1 rounded-md transition-colors"><p class="${isLead ? 'font-bold text-cyan-400 text-base' : 'text-slate-300 text-sm'}">${item.title}</p><p class="text-xs text-slate-500 font-mono mt-1">${time}</p></a>`;
-            }).join('');
-            const column = document.createElement('div');
-            column.className = 'portal-column bg-slate-800/60 border border-slate-700 rounded-lg p-4 flex flex-col h-full';
-            column.innerHTML = `<div class="flex items-center gap-2 mb-4 flex-shrink-0"><img src="${logo}" class="w-5 h-5 rounded-full" alt="Logo ${portal}"/><h3 class="font-bold text-lg text-slate-100">${portal}</h3></div><div class="flex-grow overflow-y-auto pr-2 portal-news-list">${itemsHTML}</div>`;
-            portalsPanelContainer.appendChild(column);
-        }
-        setTimeout(updatePortalScrollArrows, 100);
-    }
-    
-    function renderTrendingTopicsView() {
-        const newsItems = masterNewsCache;
-        trendingTopicsDataMap.clear();
-        if (newsItems.length === 0) { trendingTopicsContainer.innerHTML = `<p class="col-span-full text-center text-slate-400">Aguardando notícias...</p>`; return; }
-        const stopWords = new Set(['a', 'o', 'e', 'é', 'de', 'do', 'da', 'dos', 'das', 'em', 'no', 'na', 'um', 'uma', 'com', 'por', 'para', 'se', 'que', 'como', 'são', 'mas', 'foi', 'ser', 'tem', 'já', 'diz', 'sobre', 'após', 'ter', 'pode', 'faz', 'novo', 'nova']);
-        const topicData = new Map();
-        newsItems.forEach(item => {
-            const cleanTitle = item.title.split(' - ')[0].toLowerCase().replace(/[^\w\s]/g, '');
-            const words = cleanTitle.split(/\s+/);
-            const significantWords = [...new Set(words.filter(word => word.length > 3 && isNaN(word) && !stopWords.has(word)))];
-            const entities = extractEntities(item.title).map(e => e.toLowerCase());
-            const topicKeywords = [...new Set([...entities, ...significantWords])];
-            if (topicKeywords.length > 0) {
-                const topicKey = topicKeywords.slice(0, 2).join(' '); 
-                if (!topicData.has(topicKey)) {
-                    topicData.set(topicKey, { count: 0, articles: [], fullTopics: new Set() });
-                }
-                const data = topicData.get(topicKey);
-                data.count++;
-                data.articles.push(item);
-                data.fullTopics.add(item.title.split(' - ')[0]);
-            }
-        });
-        const filteredTopics = Array.from(topicData.entries()).filter(([key, value]) => value.count > 1 && value.articles.length > 1);
-        const topicsWithTimestamp = filteredTopics.map(([key, data]) => {
-            const mostRecentTimestamp = Math.max(...data.articles.map(a => a.timestamp));
-            return { key, data, mostRecentTimestamp };
-        });
-        const sortedTopics = topicsWithTimestamp.sort((a, b) => b.mostRecentTimestamp - a.mostRecentTimestamp);
-        const top50Topics = sortedTopics.slice(0, 50);
-        trendingTopicsContainer.innerHTML = '';
-        if (top50Topics.length === 0) { trendingTopicsContainer.innerHTML = `<p class="col-span-full text-center text-slate-400">Não há assuntos com cobertura suficiente no momento.</p>`; return; }
-        top50Topics.forEach(({ key, data }) => {
-            trendingTopicsDataMap.set(key, data.articles);
-            const representativeTitle = [...data.fullTopics][0];
-            const uniquePortals = new Map();
-            data.articles.forEach(article => {
-                const portalKey = Object.keys(PORTAL_LOGOS).find(pKey => PORTAL_LOGOS[pKey] === article.sourceDomain);
-                if (portalKey && !uniquePortals.has(portalKey)) {
-                    uniquePortals.set(portalKey, { name: portalKey, domain: article.sourceDomain });
-                }
-            });
-            if (uniquePortals.size < 2) return;
-            const mostRecentTimestamp = Math.max(...data.articles.map(a => a.timestamp));
-            const relativeDateString = getRelativeDate(mostRecentTimestamp);
-            const logosHTML = [...uniquePortals.values()].map(p => `<img src="https://www.google.com/s2/favicons?domain=${p.domain}&sz=32" class="w-6 h-6 rounded-full -ml-2 border-2 border-slate-800" title="${p.name}">`).join('');
-            const card = document.createElement('div');
-            card.className = 'topic-card bg-slate-800/60 border border-slate-700 rounded-lg p-4 flex flex-col';
-            card.dataset.topicKey = key;
-            card.innerHTML = `<div class="flex-grow"><div class="flex justify-between items-center mb-2 gap-2"><span class="text-sm text-cyan-400 font-semibold">${data.count} Notícias</span><span class="text-xs font-semibold bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full">${relativeDateString}</span></div><h3 class="font-semibold text-slate-200 mt-1">${representativeTitle}</h3></div><div class="flex items-center justify-end pt-3 mt-3 border-t border-slate-700/50"><div class="flex flex-row-reverse">${logosHTML}</div></div>`;
-            trendingTopicsContainer.appendChild(card);
-        });
-    }
-    
-    function updatePortalScrollArrows() { if (!portalsPanelContainer) return; const { scrollLeft, scrollWidth, clientWidth } = portalsPanelContainer; scrollPortalsLeft.disabled = scrollLeft <= 0; scrollPortalsRight.disabled = scrollLeft >= scrollWidth - clientWidth - 5; }
-    async function refreshAggregateView() { if (currentAppView === 'aggregate') { const container = currentAggregateView === 'portal' ? portalsPanelContainerWrapper : trendingTopicsContainerWrapper; const icon = refreshAggregateBtn.querySelector('svg'); icon.classList.add('animate-spin'); container.style.opacity = '0.5'; await setupAggregateView(); container.style.opacity = '1'; icon.classList.remove('animate-spin'); showToast("Painel de cobertura atualizado!"); } }
-
     document.addEventListener('DOMContentLoaded', () => {
         const storedRondas = localStorage.getItem('rondas'); 
         if (storedRondas) { rondas = JSON.parse(storedRondas); }
@@ -733,7 +569,6 @@
         document.addEventListener('click', (e) => { if (mediaFilterDropdown && !mediaFilterDropdown.contains(e.target)) { mediaDropdownMenu.classList.add('hidden'); mediaFilterButton.setAttribute('aria-expanded', 'false'); mediaDropdownIcon.classList.remove('rotate-180'); } });
         viewFilterRadar.addEventListener('click', () => { currentRadarView = 'geral'; setView('radar'); });
         viewFilterForYou.addEventListener('click', () => { currentRadarView = 'paraSi'; setView('radar'); });
-        viewFilterAggregate.addEventListener('click', () => setView('aggregate'));
         searchButton.addEventListener('click', () => handleSearch(searchInput.value, null));
         searchInput.addEventListener('input', updateClearSearchButton);
         searchInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleSearch(searchInput.value, null); });
@@ -750,38 +585,12 @@
         rondasContent.addEventListener('click', (e) => { const deleteBtn = e.target.closest('.delete-ronda-btn'); if (deleteBtn) { const index = deleteBtn.dataset.index; if (confirm(`Excluir a ronda "${rondas[index].name}"?`)) { rondas.splice(index, 1); saveRondas(); renderRondas(); showToast(`Ronda excluída.`); } } const removeBtn = e.target.closest('.remove-from-ronda-btn'); if (removeBtn) { const { rondaIndex, itemIndex } = removeBtn.dataset; rondas[rondaIndex].news.splice(itemIndex, 1); saveRondas(); renderRondas(); showToast(`Notícia removida.`); } const exportBtn = e.target.closest('.export-xlsx-btn'); if (exportBtn) exportToXLSX(exportBtn.dataset.index); });
         rondasContent.addEventListener('change', (e) => { if (e.target.classList.contains('note-textarea')) { const { rondaIndex, itemIndex } = e.target.dataset; rondas[rondaIndex].news[itemIndex].note = e.target.value; saveRondas(); } });
         resultsContainer.addEventListener('click', (e) => { const saveButton = e.target.closest('.add-to-ronda-btn'); if (saveButton) { e.preventDefault(); const urlToSave = saveButton.dataset.url; const newsItem = masterNewsCache.find(item => item.url === urlToSave); if (!newsItem) return; if (rondas.length === 0) { showToast('Crie uma ronda primeiro!'); return; } const promptMsg = `Adicionar a qual ronda?\n${rondas.map((d, i) => `${i+1}: ${d.name}`).join('\n')}`; const choice = prompt(promptMsg); if (choice && rondas[choice-1]) { const ronda = rondas[choice-1]; if (ronda.news.some(n => n.url === newsItem.url)) { showToast('Notícia já está nesta ronda.'); return; } ronda.news.push(newsItem); saveRondas(); showToast(`Salvo em "${ronda.name}"!`); saveButton.querySelector('svg').classList.add('text-cyan-500'); } } });
-        aggViewPortalBtn.addEventListener('click', () => { currentAggregateView = 'portal'; aggViewPortalBtn.classList.add('agg-view-btn-active'); aggViewTopicBtn.classList.remove('agg-view-btn-active'); portalsPanelContainerWrapper.classList.remove('hidden'); trendingTopicsContainerWrapper.classList.add('hidden'); setupAggregateView(); });
-        aggViewTopicBtn.addEventListener('click', () => { currentAggregateView = 'topic'; aggViewTopicBtn.classList.add('agg-view-btn-active'); aggViewPortalBtn.classList.remove('agg-view-btn-active'); trendingTopicsContainerWrapper.classList.remove('hidden'); portalsPanelContainerWrapper.classList.add('hidden'); setupAggregateView(); });
-        refreshAggregateBtn.addEventListener('click', () => refreshAggregateView());
         closeRondaInfoBtn.addEventListener('click', () => { localStorage.setItem('hasSeenRondaInfo', 'true'); rondaInfoModal.classList.add('hidden'); renderRondas(); rondasModal.classList.remove('hidden'); });
         closeWelcomeBannerBtn.addEventListener('click', () => { localStorage.setItem('hasSeenWelcomeInfo', 'true'); welcomeBanner.classList.add('hidden'); });
         exportAllRondasBtn.addEventListener('click', () => exportAllRondasToXLSX());
         helpButton.addEventListener('click', () => helpModal.classList.remove('hidden'));
         closeHelpModalBtn.addEventListener('click', () => helpModal.classList.add('hidden'));
         helpModal.addEventListener('click', (e) => { if (e.target.id === 'helpModal') { helpModal.classList.add('hidden'); } });
-        scrollPortalsLeft.addEventListener('click', () => portalsPanelContainer.scrollBy({ left: -350, behavior: 'smooth' }));
-        scrollPortalsRight.addEventListener('click', () => portalsPanelContainer.scrollBy({ left: 350, behavior: 'smooth' }));
-        portalsPanelContainer.addEventListener('scroll', updatePortalScrollArrows);
-        trendingTopicsContainer.addEventListener('click', (e) => {
-            const topicCard = e.target.closest('.topic-card');
-            if (topicCard) {
-                const topicKey = topicCard.dataset.topicKey;
-                const articles = trendingTopicsDataMap.get(topicKey);
-                if (articles) {
-                    topicDetailTitle.textContent = articles[0].title.split(' - ')[0];
-                    let contentHTML = '<div class="space-y-3">';
-                    articles.forEach(article => {
-                        const logoUrl = `https://www.google.com/s2/favicons?domain=${article.sourceDomain}&sz=32`;
-                        contentHTML += `<a href="${article.url}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 bg-slate-700/50 hover:bg-slate-700 p-2 rounded-lg transition-colors"><img src="${logoUrl}" alt="Logo" class="flex-shrink-0 w-5 h-5 rounded-full"><div class="flex-1 min-w-0"><p class="text-sm text-slate-300 truncate font-semibold">${article.title}</p><p class="text-xs text-slate-400">${article.sourceName}</p></div></a>`;
-                    });
-                    contentHTML += '</div>';
-                    topicDetailContent.innerHTML = contentHTML;
-                    topicDetailModal.classList.remove('hidden');
-                }
-            }
-        });
-        closeTopicDetailModalBtn.addEventListener('click', () => topicDetailModal.classList.add('hidden'));
-        topicDetailModal.addEventListener('click', (e) => { if (e.target.id === 'topicDetailModal') { topicDetailModal.classList.add('hidden'); }});
     });
 </script>
 </body>
