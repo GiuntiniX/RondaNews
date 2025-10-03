@@ -27,16 +27,9 @@
         .has-tooltip { position: relative; cursor: pointer; }
         .has-tooltip::after { content: attr(data-tooltip); position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background-color: #1e293b; color: #e2e8f0; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; z-index: 10; }
         .has-tooltip:hover::after { opacity: 1; transform: translateX(-50%) translateY(-5px); }
-        #mainViewTabs::-webkit-scrollbar, .category-tabs-container::-webkit-scrollbar { display: none; }
-        #mainViewTabs, .category-tabs-container { -ms-overflow-style: none; scrollbar-width: none; }
+        #mainViewTabs::-webkit-scrollbar { display: none; }
+        #mainViewTabs { -ms-overflow-style: none; scrollbar-width: none; }
         .entity-tag { background-color: #334155; color: #cbd5e1; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 500; }
-        .portal-column-container { display: grid; scroll-behavior: smooth; grid-auto-flow: column; grid-auto-columns: minmax(320px, 1fr); overflow-x: auto; gap: 1rem; padding-bottom: 1rem; height: 75vh; }
-        .portal-column-container::-webkit-scrollbar { display: none; }
-        .portal-column { transition: opacity 0.5s ease-in-out; }
-        .portal-news-list, #topicDetailContent { scrollbar-width: thin; scrollbar-color: #475569 #1e293b; }
-        .portal-news-list::-webkit-scrollbar, #topicDetailContent::-webkit-scrollbar { width: 6px; }
-        .portal-news-list::-webkit-scrollbar-track, #topicDetailContent::-webkit-scrollbar-track { background: #1e293b; }
-        .portal-news-list::-webkit-scrollbar-thumb, #topicDetailContent::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
         .topic-card { cursor: pointer; transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; }
         .topic-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
         .category-tab { border-bottom: 3px solid transparent; }
@@ -137,7 +130,7 @@
                             <h2 class="text-lg font-bold text-cyan-400">Navegue por Editorial</h2>
                             <button id="clearFollowedBtn" class="hidden text-xs text-red-400 hover:text-red-300 font-semibold transition-colors duration-200">Limpar Tópicos</button>
                         </div>
-                        <div id="categoriesContainer" class="border-t border-slate-700">
+                        <div id="categoriesContainer" class="border-t border-slate-700 pt-3">
                         </div>
                     </div>
                     <main id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></main>
@@ -280,7 +273,7 @@
     let currentCategorySearch = null;
 
     // --- CONSTANTS & CONFIGS ---
-    const mainCategories = ['Política', 'Economia', 'Mundo', 'Cidades', 'Estilo de Vida', 'Educação', 'Ciência', 'Tecnologia', 'Games', 'Esportes', 'Cultura', 'Entretenimento', 'Viagem', 'Gastronomia', 'Carros'];
+    const mainCategories = ['Política', 'Economia', 'Negócios', 'Mundo', 'Cidades', 'Estilo de Vida', 'Educação', 'Ciência', 'Tecnologia', 'Games', 'Esportes', 'Cultura', 'Entretenimento', 'Filmes', 'Viagem', 'Gastronomia', 'Carros'];
     const MEDIA_FORMATS = {
         'todos': { label: 'Todos', emoji: '' },
         'texto': { label: 'Notícia', emoji: '📝' },
@@ -291,6 +284,7 @@
     const categoryColorMap = {
         'Política': { border: 'border-blue-500', tagBg: 'bg-blue-500/10', tagText: 'text-blue-400' },
         'Economia': { border: 'border-emerald-500', tagBg: 'bg-emerald-500/10', tagText: 'text-emerald-400' },
+        'Negócios': { border: 'border-yellow-800', tagBg: 'bg-yellow-800/10', tagText: 'text-yellow-700' },
         'Mundo': { border: 'border-sky-500', tagBg: 'bg-sky-500/10', tagText: 'text-sky-400' },
         'Cidades': { border: 'border-orange-500', tagBg: 'bg-orange-500/10', tagText: 'text-orange-400' },
        'Estilo de Vida': { border: 'border-red-500', tagBg: 'bg-red-500/10', tagText: 'text-red-400' },
@@ -301,6 +295,7 @@
         'Esportes': { border: 'border-lime-500', tagBg: 'bg-lime-500/10', tagText: 'text-lime-400' },
         'Cultura': { border: 'border-rose-500', tagBg: 'bg-rose-500/10', tagText: 'text-rose-400' },
         'Entretenimento': { border: 'border-pink-500', tagBg: 'bg-pink-500/10', tagText: 'text-pink-400' },
+        'Filmes': { border: 'border-yellow-500', tagBg: 'bg-yellow-500/10', tagText: 'text-yellow-400' },
         'Viagem': { border: 'border-teal-500', tagBg: 'bg-teal-500/10', tagText: 'text-teal-400' },
         'Gastronomia': { border: 'border-amber-500', tagBg: 'bg-amber-500/10', tagText: 'text-amber-400' },
         'Carros': { border: 'border-slate-500', tagBg: 'bg-slate-500/10', tagText: 'text-slate-400' },
@@ -320,8 +315,10 @@
         "terra.com.br": "https://logospng.org/download/terra/logo-terra-2048.png"
     };
     const CATEGORY_ICONS = {
+        'Todas': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h6M7 8h6" /></svg>`,
         'Política': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>`,
         'Economia': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>`,
+        'Negócios': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>`,
         'Mundo': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h10a2 2 0 002-2v-1a2 2 0 012-2h1.945M7.707 4.293l.707-.707a2 2 0 012.828 0l.707.707M7.707 4.293l-.707.707a2 2 0 00-2.828 0l-.707-.707M7.707 4.293c.586.586.586 1.536 0 2.122M12 21a9 9 0 110-18 9 9 0 010 18z" /></svg>`,
         'Cidades': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5-4h1v4h-1V7zm3 0h1v4h-1V7z" /></svg>`,
         'Estilo de Vida': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>`,
@@ -332,6 +329,7 @@
         'Esportes': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>`,
         'Cultura': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 8h4m0 0v10m0-10L3 3l4 5zM21 8h-4m0 0v10m0-10l4-5-4 5zM9 4v16" /></svg>`,
         'Entretenimento': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 8h4m11 0h4M5 8h14M5 12h14M5 16h14M3 20h4m11 0h4" /></svg>`,
+        'Filmes': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 8h4m11 0h4M5 8h14M5 12h14M5 16h14M3 20h4m11 0h4" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>`,
         'Viagem': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>`,
         'Gastronomia': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16v4m-2-2h4m2 13.5V21m-4-4v-4m0 0h-4m4 0h4m-4 0v4m0 0h-4m4 0h4m-6-13v4m0 0h-4m4 0h4m0 0v4m0 0h-4m4 0h4" /></svg>`,
         'Carros': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" /></svg>`,
@@ -533,8 +531,13 @@
     
     function renderCategories() {
         categoriesContainer.innerHTML = '';
-        const tabsContainer = document.createElement('div');
-        tabsContainer.className = 'flex items-center gap-2 overflow-x-auto category-tabs-container pt-2';
+
+        const row1 = document.createElement('div');
+        row1.className = 'flex flex-wrap justify-center gap-2 mb-2';
+
+        const row2 = document.createElement('div');
+        row2.className = 'flex flex-wrap justify-center gap-2';
+
         const createTab = (category) => {
             const tabButton = document.createElement('button');
             const colors = categoryColorMap[category] || categoryColorMap['Outros'];
@@ -581,9 +584,19 @@
             };
             return tabButton;
         };
-        tabsContainer.appendChild(createTab('Todas'));
-        mainCategories.forEach(category => tabsContainer.appendChild(createTab(category)));
-        categoriesContainer.appendChild(tabsContainer);
+
+        // Popula a primeira linha (9 botões)
+        row1.appendChild(createTab('Todas'));
+        const firstRowCategories = mainCategories.slice(0, 8);
+        firstRowCategories.forEach(category => row1.appendChild(createTab(category)));
+
+        // Popula a segunda linha (restante)
+        const secondRowCategories = mainCategories.slice(8);
+        secondRowCategories.forEach(category => row2.appendChild(createTab(category)));
+
+        categoriesContainer.appendChild(row1);
+        categoriesContainer.appendChild(row2);
+
         clearFollowedBtn.classList.toggle('hidden', !(currentRadarView === 'paraSi' && followedTopics.length > 0));
     }
 
@@ -610,7 +623,7 @@
     
     function handleMediaFilterChange(filterKey) { currentMediaFilter = filterKey; updateMediaDropdown(filterKey); mediaDropdownMenu.classList.add('hidden'); mediaFilterButton.setAttribute('aria-expanded', 'false'); mediaDropdownIcon.classList.remove('rotate-180'); renderRadarResults(); }
     function updateTimestamp() {
-        lastUpdatedElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Atualização a cada minuto</span>`;
+        lastUpdatedElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Atualização a cada 1 minuto</span>`;
     }
     function updateClearSearchButton() { clearSearchBtn.classList.toggle('hidden', searchInput.value.trim().length === 0); }
     function handleScroll() { if (currentAppView === 'radar' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500 && !isLoadingMore) { let listForCounting = masterNewsCache; listForCounting = applyDateFilter(listForCounting, currentDateFilter); const totalItems = applyMediaFilter(listForCounting, currentMediaFilter).length; if (resultsContainer.children.length < totalItems) { isLoadingMore = true; currentPage++; renderRadarResults(true); } } if (window.scrollY > 300) { backToTopBtn.classList.remove('hidden', 'opacity-0', 'translate-y-20'); backToTopBtn.classList.add('opacity-100', 'translate-y-0'); } else { backToTopBtn.classList.add('opacity-0', 'translate-y-20'); setTimeout(() => backToTopBtn.classList.add('hidden'), 300); } }
@@ -646,14 +659,32 @@
         renderRadarResults(); 
     }
 
+    function initializeRondas() {
+        const storedRondas = localStorage.getItem('rondas');
+        if (storedRondas) {
+            rondas = JSON.parse(storedRondas);
+        } else {
+            // Se não houver rondas salvas, cria a lista padrão
+            rondas = [
+                { name: "Notícias", news: [] },
+                { name: "Entretenimento", news: [] },
+                { name: "Tecnologia", news: [] },
+                { name: "Economia", news: [] },
+                { name: "Educação", news: [] },
+                { name: "Estilo de Vida", news: [] },
+                { name: "Esportes", news: [] }
+            ];
+            saveRondas(); // Salva a lista padrão no localStorage
+        }
+    }
+
     function renderRondas() { rondasContent.innerHTML = ''; rondaCountBadge.textContent = rondas.length; if (rondas.length === 0) { rondasContent.innerHTML = `<p class="text-center text-slate-400">Crie sua primeira ronda para organizar suas pautas.</p>`; return; } rondas.forEach((ronda, index) => { const rondaElement = document.createElement('div'); rondaElement.className = 'bg-slate-700/50 rounded-lg p-4 mb-4'; rondaElement.innerHTML = `<div class="flex justify-between items-center mb-3"><h3 class="text-base font-bold text-cyan-400">${ronda.name} (${ronda.news.length})</h3><div><button class="export-xlsx-btn text-xs text-cyan-400 hover:underline mr-4" data-index="${index}">Exportar Ronda</button><button class="delete-ronda-btn text-xs text-red-400 hover:text-red-300" data-index="${index}">Excluir</button></div></div><div class="space-y-2 max-h-60 overflow-y-auto pr-2" id="ronda-list-${index}">${ronda.news.length > 0 ? ronda.news.map((item, itemIndex) => `<div class="bg-slate-800 p-2 rounded-md"><div class="flex justify-between items-start"><a href="${item.url}" target="_blank" class="text-sm text-slate-300 hover:underline flex-1 truncate pr-2" title="${item.title}">${item.title}</a><button class="remove-from-ronda-btn flex-shrink-0" data-ronda-index="${index}" data-item-index="${itemIndex}" aria-label="Remover"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500 hover:text-red-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg></button></div><textarea class="note-textarea w-full bg-slate-700 text-slate-300 text-xs p-1 mt-2 rounded border border-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500" rows="1" placeholder="Adicionar anotação..." data-ronda-index="${index}" data-item-index="${itemIndex}">${item.note || ''}</textarea></div>`).join('') : '<p class="text-xs text-slate-500 text-center">Nenhuma notícia nesta ronda.</p>'}</div>`; rondasContent.appendChild(rondaElement); }); }
     function saveRondas() { localStorage.setItem('rondas', JSON.stringify(rondas)); }
     function exportToXLSX(rondaIndex) { const ronda = rondas[rondaIndex]; if (!ronda || ronda.news.length === 0) { showToast('Ronda vazia.'); return; } const dataToExport = ronda.news.map(item => ({ 'Título': item.title, 'URL': item.url, 'Fonte': item.sourceName, 'Data': new Date(item.timestamp).toLocaleString('pt-BR'), 'Anotação': item.note || '' })); const worksheet = XLSX.utils.json_to_sheet(dataToExport); const workbook = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(workbook, worksheet, "Ronda"); XLSX.writeFile(workbook, `${ronda.name.replace(/\s+/g, '_')}.xlsx`); showToast(`Ronda "${ronda.name}" exportada!`); }
     function exportAllRondasToXLSX() { if (rondas.length === 0) { showToast("Nenhuma ronda para exportar."); return; } const workbook = XLSX.utils.book_new(); rondas.forEach(ronda => { if (ronda.news.length > 0) { const dataToExport = ronda.news.map(item => ({ 'Título': item.title, 'URL': item.url, 'Fonte': item.sourceName, 'Data': new Date(item.timestamp).toLocaleString('pt-BR'), 'Anotação': item.note || '' })); const worksheet = XLSX.utils.json_to_sheet(dataToExport); const sheetName = ronda.name.replace(/[\\/*?\[\]]/g, '').substring(0, 31); XLSX.utils.book_append_sheet(workbook, worksheet, sheetName); } }); if (workbook.SheetNames.length === 0) { showToast("Todas as rondas estão vazias."); return; } XLSX.writeFile(workbook, `Minhas_Rondas_${new Date().toISOString().split('T')[0]}.xlsx`); }
     
     document.addEventListener('DOMContentLoaded', () => {
-        const storedRondas = localStorage.getItem('rondas'); 
-        if (storedRondas) { rondas = JSON.parse(storedRondas); }
+        initializeRondas();
         const storedTopics = localStorage.getItem('followedTopics'); if (storedTopics) { followedTopics = JSON.parse(storedTopics); }
         if (!localStorage.getItem('hasSeenWelcomeInfo')) { welcomeBanner.classList.remove('hidden'); setTimeout(() => { welcomeBanner.classList.add('hidden') }, 20000); }
         updateMediaDropdown(currentMediaFilter);
