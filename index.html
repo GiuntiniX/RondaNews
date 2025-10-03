@@ -375,7 +375,7 @@
     function getMediaIconAndColor(mediaType) { return MEDIA_FORMATS[mediaType] || MEDIA_FORMATS['texto']; }
     function updateMediaDropdown(filterKey) { const mediaInfo = getMediaIconAndColor(filterKey); currentMediaLabel.textContent = `Mídia: ${mediaInfo.label} ${mediaInfo.emoji}`; mediaDropdownMenu.querySelectorAll('button').forEach(btn => btn.classList.remove('media-dropdown-active')); const activeBtn = mediaDropdownMenu.querySelector(`[data-media-key="${filterKey}"]`); if (activeBtn) activeBtn.classList.add('media-dropdown-active'); }
     const applyMediaFilter = (items, filterKey) => (filterKey === 'todos' ? items : items.filter(item => item.mediaType === filterKey));
-    
+
     function renderRadarResults(append = false) { 
         if (!append) { resultsContainer.innerHTML = ''; currentPage = 1; } 
         
@@ -534,7 +534,7 @@
     function renderCategories() {
         categoriesContainer.innerHTML = '';
         const tabsContainer = document.createElement('div');
-        tabsContainer.className = 'flex items-center gap-2 overflow-x-auto category-tabs-container pt-2'; // Reduced gap
+        tabsContainer.className = 'flex items-center gap-2 overflow-x-auto category-tabs-container pt-2';
         const createTab = (category) => {
             const tabButton = document.createElement('button');
             const colors = categoryColorMap[category] || categoryColorMap['Outros'];
@@ -610,7 +610,7 @@
     
     function handleMediaFilterChange(filterKey) { currentMediaFilter = filterKey; updateMediaDropdown(filterKey); mediaDropdownMenu.classList.add('hidden'); mediaFilterButton.setAttribute('aria-expanded', 'false'); mediaDropdownIcon.classList.remove('rotate-180'); renderRadarResults(); }
     function updateTimestamp() {
-        lastUpdatedElement.innerHTML = `<span class="text-slate-500/70">(Robô atualiza a cada 30 min)</span>`;
+        lastUpdatedElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Atualização a cada 1 minuto</span>`;
     }
     function updateClearSearchButton() { clearSearchBtn.classList.toggle('hidden', searchInput.value.trim().length === 0); }
     function handleScroll() { if (currentAppView === 'radar' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500 && !isLoadingMore) { let listForCounting = masterNewsCache; listForCounting = applyDateFilter(listForCounting, currentDateFilter); const totalItems = applyMediaFilter(listForCounting, currentMediaFilter).length; if (resultsContainer.children.length < totalItems) { isLoadingMore = true; currentPage++; renderRadarResults(true); } } if (window.scrollY > 300) { backToTopBtn.classList.remove('hidden', 'opacity-0', 'translate-y-20'); backToTopBtn.classList.add('opacity-100', 'translate-y-0'); } else { backToTopBtn.classList.add('opacity-0', 'translate-y-20'); setTimeout(() => backToTopBtn.classList.add('hidden'), 300); } }
@@ -661,7 +661,11 @@
         
         mediaFilterButton.addEventListener('click', (e) => { e.stopPropagation(); const isExpanded = mediaFilterButton.getAttribute('aria-expanded') === 'true'; mediaFilterButton.setAttribute('aria-expanded', !isExpanded); mediaDropdownMenu.classList.toggle('hidden', isExpanded); mediaDropdownIcon.classList.toggle('rotate-180', !isExpanded); });
         mediaDropdownMenu.querySelectorAll('button').forEach(button => button.addEventListener('click', (e) => handleMediaFilterChange(e.currentTarget.getAttribute('data-media-key'))));
-        document.addEventListener('click', (e) => { if (mediaFilterDropdown && !mediaFilterDropdown.contains(e.target)) { mediaDropdownMenu.classList.add('hidden'); mediaFilterButton.setAttribute('aria-expanded', 'false'); mediaDropdownIcon.classList.remove('rotate-180'); } });
+        
+        document.addEventListener('click', (e) => { 
+            if (mediaFilterDropdown && !mediaFilterDropdown.contains(e.target)) { mediaDropdownMenu.classList.add('hidden'); mediaFilterButton.setAttribute('aria-expanded', 'false'); mediaDropdownIcon.classList.remove('rotate-180'); }
+        });
+
         viewFilterRadar.addEventListener('click', () => { currentRadarView = 'geral'; setView('radar'); });
         viewFilterForYou.addEventListener('click', () => { currentRadarView = 'paraSi'; setView('radar'); });
         searchButton.addEventListener('click', () => handleSearch());
