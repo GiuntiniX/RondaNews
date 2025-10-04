@@ -30,12 +30,68 @@
         #mainViewTabs::-webkit-scrollbar { display: none; }
         #mainViewTabs { -ms-overflow-style: none; scrollbar-width: none; }
         .entity-tag { background-color: #334155; color: #cbd5e1; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 500; }
-        .topic-card { cursor: pointer; transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; }
-        .topic-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
-        .category-tab { border-bottom: 3px solid transparent; }
-        .category-followed-text { color: #60a5fa !important; }
-        .category-priority-text { color: #f59e0b !important; font-weight: 700; }
         .source-logo { max-height: 18px; width: auto; filter: grayscale(1) brightness(1.8); opacity: 0.8; }
+        
+        .news-card {
+            border: 2px solid #1e293b;
+            transition: border-color 0.3s ease-out, box-shadow 0.3s ease-out;
+        }
+        .news-card:hover {
+            border-color: var(--category-color, #475569);
+            box-shadow: 0 0 12px -2px var(--category-color, #475569);
+        }
+
+        .topic-card { 
+            cursor: pointer; 
+            transition: all 0.2s ease-out;
+        }
+        .topic-card:hover { 
+            transform: translateY(-4px); 
+        }
+
+        .topic-card.inactive:hover {
+            border-color: var(--category-color);
+            background-color: rgba(var(--category-color-rgb), 0.1);
+        }
+        .topic-card.active {
+            border-color: var(--category-color);
+            background-color: rgba(var(--category-color-rgb), 0.25);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 0 15px -5px var(--category-color);
+        }
+        
+        .topic-card.state-unfollowed {
+            background-color: rgba(51, 65, 85, 0.5);
+            border-color: #334155;
+            color: #94a3b8;
+            filter: grayscale(40%);
+        }
+        .topic-card.state-unfollowed:hover {
+            filter: grayscale(0%);
+            border-color: var(--category-color);
+            background-color: rgba(var(--category-color-rgb), 0.1);
+            color: #e2e8f0;
+        }
+        .topic-card.state-followed {
+            border-color: var(--category-color);
+            background-color: rgba(var(--category-color-rgb), 0.15);
+            color: #e2e8f0;
+        }
+        .topic-card.state-followed:hover {
+            background-color: rgba(252, 211, 77, 0.2);
+            border-color: #f59e0b;
+        }
+        .topic-card.state-priority {
+            background-color: rgba(252, 211, 77, 0.25);
+            border-color: #f59e0b;
+            color: #fcd34d;
+            font-weight: 700;
+            box-shadow: 0 0 15px -5px #f59e0b;
+        }
+        .topic-card.state-priority:hover {
+            filter: brightness(1.2);
+        }
     </style>
 </head>
 <body class="text-slate-200 antialiased">
@@ -48,7 +104,7 @@
         <p class="text-sm text-slate-300 mb-3">Conheça as seções principais no menu de navegação:</p>
         <ul class="space-y-3 text-sm text-slate-300 list-inside">
             <li><b>Últimas Notícias:</b> Feed principal com tudo de mais recente.</li>
-            <li><b>Meu Radar:</b> Acompanhe apenas os tópicos que você segue.</li>
+            <li><b>Meu Feed:</b> Acompanhe apenas os tópicos que você segue.</li>
             <li><b>Minhas Rondas:</b> Organize suas apurações.</li>
         </ul>
         <p class="text-xs text-slate-400 mt-4 pt-2 border-t border-slate-600/50">Dica: A ferramenta busca por novas matérias a cada 20 minutos e te notifica aqui!</p>
@@ -81,7 +137,7 @@
             <nav class="flex justify-center" aria-label="Navegação Principal">
                 <div id="mainViewTabs" class="flex justify-start md:justify-center bg-slate-700/50 p-1 rounded-lg w-full overflow-x-auto whitespace-nowrap">
                     <button id="viewFilterRadar" class="view-filter-active text-white px-4 py-1.5 rounded-md text-sm font-semibold transition-colors duration-200 flex items-center gap-1.5" aria-pressed="true"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h6M7 8h6" /></svg>Últimas Notícias</button>
-                    <button id="viewFilterForYou" class="text-slate-300 hover:bg-slate-600/50 px-4 py-1.5 rounded-md text-sm font-semibold transition-colors duration-200 flex items-center gap-1.5" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z" /></svg>Meu Radar</button>
+                    <button id="viewFilterForYou" class="text-slate-300 hover:bg-slate-600/50 px-4 py-1.5 rounded-md text-sm font-semibold transition-colors duration-200 flex items-center gap-1.5" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z" /></svg>Meu Feed</button>
                     <button id="rondasBtn" aria-label="Abrir Minhas Rondas" class="text-slate-300 hover:bg-slate-600/50 px-4 py-1.5 rounded-md text-sm font-semibold transition-colors duration-200 flex items-center gap-2 relative">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
                         Minhas Rondas
@@ -126,11 +182,14 @@
                 <div class="lg:col-span-10">
                     <div id="contentCounter" class="text-sm text-slate-400 mb-4 h-5"></div>
                     <div class="mb-8 bg-slate-800 rounded-xl p-4 border border-slate-700">
-                        <div class="flex justify-between items-center mb-2">
-                            <h2 class="text-lg font-bold text-cyan-400">Navegue por Editorial</h2>
-                            <button id="clearFollowedBtn" class="hidden text-xs text-red-400 hover:text-red-300 font-semibold transition-colors duration-200">Limpar Tópicos</button>
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h2 id="categoriesTitle" class="text-lg font-bold text-cyan-400">Navegue por Editorial</h2>
+                                <p id="categoriesSubtitle" class="text-xs text-slate-400 mt-1 h-4"></p>
+                            </div>
+                            <button id="clearFollowedBtn" class="hidden text-xs text-red-400 hover:text-red-300 font-semibold transition-colors duration-200 flex-shrink-0">Limpar Tópicos</button>
                         </div>
-                        <div id="categoriesContainer" class="border-t border-slate-700 pt-3">
+                        <div id="categoriesContainer" class="border-t border-slate-700 pt-4">
                         </div>
                     </div>
                     <main id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></main>
@@ -205,6 +264,48 @@
                 </button>
             </header>
             <div class="flex-grow p-6 overflow-y-auto space-y-6 text-slate-300">
+                <div class="space-y-2">
+                    <h3 class="text-lg font-semibold text-cyan-400">Principais Funcionalidades</h3>
+                    <p class="text-sm text-slate-400">Esta ferramenta foi projetada para otimizar seu tempo e centralizar o fluxo de informações. Conheça as seções principais:</p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-100 mb-2">1. Últimas Notícias</h4>
+                    <ul class="space-y-2 text-sm list-disc list-inside text-slate-400">
+                        <li>Este é o seu feed principal, exibindo as notícias mais recentes de todas as fontes e editorias.</li>
+                        <li>Use os botões de editoria no topo da página para filtrar o conteúdo por um assunto específico.</li>
+                        <li>A barra de busca permite encontrar notícias por palavras-chave.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-100 mb-2">2. Meu Feed</h4>
+                    <ul class="space-y-2 text-sm list-disc list-inside text-slate-400">
+                        <li>Seu espaço 100% personalizado. Ele começa vazio e exibe apenas o que você escolhe seguir.</li>
+                        <li><strong>Como funciona:</strong> Clique nas editorias para adicioná-las ao seu feed. O sistema funciona em um ciclo de 3 cliques:
+                            <ul class="pl-6 mt-2 space-y-1">
+                                <li><strong class="text-slate-200">1º Clique:</strong> Seguir (o botão fica colorido).</li>
+                                <li><strong class="text-slate-200">2º Clique:</strong> Priorizar (o botão fica dourado e as notícias da editoria aparecem no topo).</li>
+                                <li><strong class="text-slate-200">3º Clique:</strong> Deixar de seguir (o botão volta a ficar cinza).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-100 mb-2">3. Minhas Rondas</h4>
+                    <ul class="space-y-2 text-sm list-disc list-inside text-slate-400">
+                        <li>Funciona como um sistema de pastas para organizar suas apurações ou projetos.</li>
+                        <li>Crie novas rondas com nomes específicos para cada tema que estiver monitorando.</li>
+                        <li>Para salvar uma notícia, clique no ícone de marcador (<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block -mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>) em qualquer card de notícia.</li>
+                        <li>Você pode adicionar anotações a cada matéria salva e exportar o conteúdo de suas rondas para um arquivo Excel.</li>
+                    </ul>
+                </div>
+
+                <div class="pt-4 border-t border-slate-700">
+                     <h4 class="font-bold text-slate-100 mb-2">Atualização Automática</h4>
+                     <p class="text-sm text-slate-400">Para garantir que você tenha acesso à informação mais recente, <strong>a página busca por novas notícias automaticamente a cada minuto</strong>. Você pode também forçar uma atualização clicando no botão "Atualizar".</p>
+                </div>
             </div>
         </div>
     </div>
@@ -273,7 +374,7 @@
     let currentCategorySearch = null;
 
     // --- CONSTANTS & CONFIGS ---
-    const mainCategories = ['Política', 'Economia', 'Negócios', 'Mundo', 'Cidades', 'Estilo de Vida', 'Educação', 'Ciência', 'Tecnologia', 'Games', 'Esportes', 'Cultura', 'Entretenimento', 'Filmes', 'Viagem', 'Gastronomia', 'Carros'];
+    const mainCategories = ['Principais', 'Economia', 'Meio Ambiente', 'Saúde', 'Cinema', 'Política', 'Mundo', 'Cidades', 'Estilo de Vida', 'Educação', 'Ciência', 'Tecnologia', 'Games', 'Esportes', 'Cultura', 'Entretenimento', 'Viagem', 'Gastronomia', 'Carros'];
     const MEDIA_FORMATS = {
         'todos': { label: 'Todos', emoji: '' },
         'texto': { label: 'Notícia', emoji: '📝' },
@@ -282,25 +383,26 @@
         'imagem': { label: 'Imagem/Galeria', emoji: '🖼️' }
     };
     const categoryColorMap = {
-        'Política': { border: 'border-blue-500', tagBg: 'bg-blue-500/10', tagText: 'text-blue-400' },
-        'Economia': { border: 'border-emerald-500', tagBg: 'bg-emerald-500/10', tagText: 'text-emerald-400' },
-        'Negócios': { border: 'border-yellow-800', tagBg: 'bg-yellow-800/10', tagText: 'text-yellow-700' },
-        'Mundo': { border: 'border-sky-500', tagBg: 'bg-sky-500/10', tagText: 'text-sky-400' },
-        'Cidades': { border: 'border-orange-500', tagBg: 'bg-orange-500/10', tagText: 'text-orange-400' },
-       'Estilo de Vida': { border: 'border-red-500', tagBg: 'bg-red-500/10', tagText: 'text-red-400' },
-        'Educação': { border: 'border-indigo-500', tagBg: 'bg-indigo-500/10', tagText: 'text-indigo-400' },
-        'Ciência': { border: 'border-purple-500', tagBg: 'bg-purple-500/10', tagText: 'text-purple-400' },
-        'Tecnologia': { border: 'border-cyan-500', tagBg: 'bg-cyan-500/10', tagText: 'text-cyan-400' },
-        'Games': { border: 'border-violet-500', tagBg: 'bg-violet-500/10', tagText: 'text-violet-400' },
-        'Esportes': { border: 'border-lime-500', tagBg: 'bg-lime-500/10', tagText: 'text-lime-400' },
-        'Cultura': { border: 'border-rose-500', tagBg: 'bg-rose-500/10', tagText: 'text-rose-400' },
-        'Entretenimento': { border: 'border-pink-500', tagBg: 'bg-pink-500/10', tagText: 'text-pink-400' },
-        'Filmes': { border: 'border-yellow-500', tagBg: 'bg-yellow-500/10', tagText: 'text-yellow-400' },
-        'Viagem': { border: 'border-teal-500', tagBg: 'bg-teal-500/10', tagText: 'text-teal-400' },
-        'Gastronomia': { border: 'border-amber-500', tagBg: 'bg-amber-500/10', tagText: 'text-amber-400' },
-        'Carros': { border: 'border-slate-500', tagBg: 'bg-slate-500/10', tagText: 'text-slate-400' },
-        'Outros': { border: 'border-gray-500', tagBg: 'bg-gray-500/10', tagText: 'text-gray-400' },
-        'Todas': { border: 'border-cyan-500', tagBg: 'bg-cyan-500/10', tagText: 'text-cyan-400' }
+        'Principais':     { tagBg: 'bg-cyan-500/10',    tagText: 'text-cyan-400',    color: '#22d3ee', rgb: '34, 211, 238' },
+        'Meio Ambiente':  { tagBg: 'bg-teal-500/10',    tagText: 'text-teal-400',    color: '#2dd4bf', rgb: '45, 212, 191' },
+        'Saúde':          { tagBg: 'bg-red-500/10',     tagText: 'text-red-400',     color: '#ef4444', rgb: '239, 68, 68' },
+        'Cinema':         { tagBg: 'bg-indigo-500/10',  tagText: 'text-indigo-400',  color: '#818cf8', rgb: '129, 140, 248' },
+        'Política':       { tagBg: 'bg-blue-500/10',    tagText: 'text-blue-400',    color: '#60a5fa', rgb: '96, 165, 250' },
+        'Economia':       { tagBg: 'bg-emerald-500/10', tagText: 'text-emerald-400', color: '#34d399', rgb: '52, 211, 153' },
+        'Mundo':          { tagBg: 'bg-sky-500/10',     tagText: 'text-sky-400',     color: '#38bdf8', rgb: '56, 189, 248' },
+        'Cidades':        { tagBg: 'bg-orange-500/10',  tagText: 'text-orange-400',  color: '#f97316', rgb: '249, 115, 22' },
+        'Estilo de Vida': { tagBg: 'bg-fuchsia-500/10', tagText: 'text-fuchsia-400', color: '#d946ef', rgb: '217, 70, 239' },
+        'Educação':       { tagBg: 'bg-purple-500/10',  tagText: 'text-purple-400',  color: '#a855f7', rgb: '168, 85, 247' },
+        'Ciência':        { tagBg: 'bg-violet-500/10',  tagText: 'text-violet-400',  color: '#8b5cf6', rgb: '139, 92, 246' },
+        'Tecnologia':     { tagBg: 'bg-cyan-500/10',    tagText: 'text-cyan-400',    color: '#22d3ee', rgb: '34, 211, 238' },
+        'Games':          { tagBg: 'bg-gray-500/10',    tagText: 'text-gray-400',    color: '#a1a1aa', rgb: '161, 161, 170' },
+        'Esportes':       { tagBg: 'bg-lime-500/10',    tagText: 'text-lime-400',    color: '#84cc16', rgb: '132, 204, 22' },
+        'Cultura':        { tagBg: 'bg-rose-500/10',    tagText: 'text-rose-400',    color: '#f43f5e', rgb: '244, 63, 94' },
+        'Entretenimento': { tagBg: 'bg-pink-500/10',    tagText: 'text-pink-400',    color: '#ec4899', rgb: '236, 72, 153' },
+        'Viagem':         { tagBg: 'bg-amber-500/10',   tagText: 'text-amber-400',   color: '#f59e0b', rgb: '245, 158, 11' },
+        'Gastronomia':    { tagBg: 'bg-yellow-500/10',  tagText: 'text-yellow-400',  color: '#eab308', rgb: '234, 179, 8' },
+        'Carros':         { tagBg: 'bg-slate-500/10',   tagText: 'text-slate-400',   color: '#64748b', rgb: '100, 116, 139' },
+        'Outros':         { tagBg: 'bg-gray-600/10',    tagText: 'text-gray-500',    color: '#4b5563', rgb: '75, 85, 99' }
     };
     const SOURCE_LOGOS_URL = {
         "g1.globo.com": "https://s.glbimg.com/bu/i/fc/500/g1.png",
@@ -315,24 +417,25 @@
         "terra.com.br": "https://logospng.org/download/terra/logo-terra-2048.png"
     };
     const CATEGORY_ICONS = {
-        'Todas': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h6M7 8h6" /></svg>`,
-        'Política': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>`,
-        'Economia': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>`,
-        'Negócios': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>`,
-        'Mundo': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h10a2 2 0 002-2v-1a2 2 0 012-2h1.945M7.707 4.293l.707-.707a2 2 0 012.828 0l.707.707M7.707 4.293l-.707.707a2 2 0 00-2.828 0l-.707-.707M7.707 4.293c.586.586.586 1.536 0 2.122M12 21a9 9 0 110-18 9 9 0 010 18z" /></svg>`,
-        'Cidades': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5-4h1v4h-1V7zm3 0h1v4h-1V7z" /></svg>`,
-        'Estilo de Vida': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>`,
-        'Educação': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>`,
-        'Ciência': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>`,
-        'Tecnologia': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M12 6V3m0 18v-3M5.636 5.636l-1.414-1.414M19.778 19.778l-1.414-1.414M19.778 5.636l-1.414 1.414M5.636 19.778l-1.414 1.414M9 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h.01M15 12h.01M12 9v.01M12 15v.01" /></svg>`,
-        'Games': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.121 15.536c-1.171 1.952-3.07 1.952-4.242 0-1.172-1.953-1.172-5.119 0-7.072 1.171-1.952 3.07-1.952 4.242 0M8 12h.01M16 12h.01M12 8v.01M12 16v.01" /><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 14.121l-4.242-4.242M10.243 18.243l-4.243-4.243" /><path stroke-linecap="round" stroke-linejoin="round" d="M14.121 10.243L9.879 6M6 9.879l4.243-4.243" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
-        'Esportes': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>`,
-        'Cultura': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 8h4m0 0v10m0-10L3 3l4 5zM21 8h-4m0 0v10m0-10l4-5-4 5zM9 4v16" /></svg>`,
-        'Entretenimento': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 8h4m11 0h4M5 8h14M5 12h14M5 16h14M3 20h4m11 0h4" /></svg>`,
-        'Filmes': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 8h4m11 0h4M5 8h14M5 12h14M5 16h14M3 20h4m11 0h4" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>`,
-        'Viagem': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>`,
-        'Gastronomia': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16v4m-2-2h4m2 13.5V21m-4-4v-4m0 0h-4m4 0h4m-4 0v4m0 0h-4m4 0h4m-6-13v4m0 0h-4m4 0h4m0 0v4m0 0h-4m4 0h4" /></svg>`,
-        'Carros': `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" /></svg>`,
+        'Principais':     `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5" /></svg>`,
+        'Economia':       `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-3.996-2.888M21 12l-4.242-3.048" /></svg>`,
+        'Meio Ambiente':  `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 21a1.5 1.5 0 01-1.5-1.5V17.625a1.5 1.5 0 011.5-1.5h1.5a1.5 1.5 0 011.5 1.5v1.875a1.5 1.5 0 01-1.5 1.5M12 21a9 9 0 100-18 9 9 0 000 18z" /></svg>`,
+        'Saúde':          `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>`,
+        'Cinema':         `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.828a1.5 1.5 0 00-1.5-1.5H5.38a6 6 0 01-1.33-5.84A6 6 0 015.38 2.37v4.828a1.5 1.5 0 001.5 1.5h4.828a6 6 0 015.84 7.38z" /></svg>`,
+        'Política':       `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6M3 9v11.25a2.25 2.25 0 002.25 2.25h13.5A2.25 2.25 0 0021 20.25V9" /></svg>`,
+        'Mundo':          `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c1.35 0 2.463-.453 3.386-1.207m-6.772 0c.923.754 2.036 1.207 3.386 1.207M3 7l9 4 9-4M3 7a9.004 9.004 0 0118 0M3 7c0 1.35.453 2.463 1.207 3.386m15.586 0c.754-.923 1.207-2.036 1.207-3.386m-14.379 0c-.225.225-.44.458-.646.702m12.072 0c-.207-.244-.422-.477-.647-.702M12 12c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z" /></svg>`,
+        'Cidades':        `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18h16.5M5.25 7.5h13.5m-13.5 4.5h13.5m-13.5 4.5h13.5m-16.5 4.5h19.5M3.75 7.5h.008v.008H3.75V7.5zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>`,
+        'Estilo de Vida': `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4-2.248 4.5 4.5 0 00-1.12-1.996V8.25a.75.75 0 01.75-.75h7.5a.75.75 0 01.75.75v3.75c0 1.5-1.25 2.75-2.75 2.75-.75 0-1.415-.31-1.912-.822z" /></svg>`,
+        'Educação':       `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>`,
+        'Ciência':        `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>`,
+        'Tecnologia':     `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 21v-1.5M15.75 3v1.5M12 4.5v-1.5m0 18v-1.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM12 15.75a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0z" /></svg>`,
+        'Games':          `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12h.01M6 12a2.25 2.25 0 01-2.25-2.25V7.5a2.25 2.25 0 012.25-2.25h12A2.25 2.25 0 0120.25 7.5v2.25c0 .363-.053.718-.155 1.055a.75.75 0 01-1.442-.423c.044-.12.067-.246.067-.377V7.5a.75.75 0 00-.75-.75h-12a.75.75 0 00-.75.75v2.25c0 .414.336.75.75.75h.01M18 12h.01M18 12a2.25 2.25 0 012.25 2.25v2.25a2.25 2.25 0 01-2.25-2.25h-12a2.25 2.25 0 01-2.25-2.25v-2.25a2.25 2.25 0 012.25-2.25h12.01z" /></svg>`,
+        'Esportes':       `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9a9.75 9.75 0 100-13.5h9a9.75 9.75 0 100 13.5z" /><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75a9.75 9.75 0 100-13.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 5.25v13.5" /></svg>`,
+        'Cultura':        `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>`,
+        'Entretenimento': `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-1.5h5.25m-5.25 0h3m-3 0h.008m-3.75 0h11.25m-11.25 0h.008m11.242 0h.008M16.5 18v-3.375m0 0h-12M12 2.25v2.25m0 15V21.75M8.25 5.25v1.5m7.5 0v1.5M3 12h18" /></svg>`,
+        'Viagem':         `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L6 12z" /></svg>`,
+        'Gastronomia':    `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h13.5a3 3 0 003-3V8.25a3 3 0 00-3-3H5.25z" /></svg>`,
+        'Carros':         `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1.5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.125-.504 1.125-1.125V14.25m-17.25 4.5h10.5a1.125 1.125 0 001.125-1.125V6.75a1.125 1.125 0 00-1.125-1.125H4.5A1.125 1.125 0 003.375 6.75v10.5a1.125 1.125 0 001.125 1.125z" /></svg>`,
     };
     
     // --- FUNÇÕES DE ANÁLISE DE CONTEÚDO E UTILIDADE ---
@@ -406,22 +509,26 @@
         filteredNews = applyDateFilter(filteredNews, currentDateFilter);
         filteredNews = applyMediaFilter(filteredNews, currentMediaFilter);
         
-        if (currentCategorySearch && currentCategorySearch !== 'Todas') {
+        if (currentRadarView === 'geral' && currentCategorySearch) {
             filteredNews = filteredNews.filter(news => news.category === currentCategorySearch);
         }
 
-        if (currentRadarView === 'paraSi' && currentAppView === 'radar') { 
+        if (currentRadarView === 'paraSi') { 
             if (followedTopics.length === 0) { 
                 messageState.classList.remove('hidden'); 
-                messageTitle.textContent = 'Adicione seus Tópicos Favoritos!'; 
-                messageText.textContent = 'Para ver o feed "Meu Radar", clique nos editoriais abaixo para seguir.'; 
+                messageTitle.textContent = 'Seu Feed está vazio!'; 
+                messageText.textContent = 'Clique nas editorias acima para começar a seguir os assuntos do seu interesse.'; 
                 contentCounter.textContent = ''; 
                 resultsContainer.innerHTML = ''; 
                 return; 
             } 
             filteredNews = filteredNews.filter(news => followedTopics.some(followed => followed.topic === news.category)); 
             const getPriority = (category) => { const followed = followedTopics.find(t => t.topic === category); return followed ? followed.priority : 0; }; 
-            filteredNews.sort((a, b) => getPriority(b.category) - getPriority(a.category)); 
+            filteredNews.sort((a, b) => {
+                const priorityDiff = getPriority(b.category) - getPriority(a.category);
+                if (priorityDiff !== 0) return priorityDiff;
+                return new Date(b.timestamp) - new Date(a.timestamp);
+            });
         } 
 
         const totalItems = filteredNews.length; 
@@ -429,10 +536,10 @@
         const endIndex = startIndex + itemsPerPage; 
         const paginatedItems = filteredNews.slice(startIndex, endIndex); 
         
-        if (paginatedItems.length === 0 && currentPage === 1) { 
+        if (paginatedItems.length === 0 && currentPage === 1 && currentRadarView === 'geral') { 
             messageState.classList.remove('hidden'); 
             messageTitle.textContent = 'Nenhuma notícia encontrada.'; 
-            messageText.textContent = 'Tente um termo diferente ou ajuste os filtros.'; 
+            messageText.textContent = 'Tente um termo diferente ou ajuste os filtros de data e mídia.'; 
             contentCounter.textContent = ''; 
             return; 
         } 
@@ -447,7 +554,9 @@
             resultsContainer.appendChild(card); 
         }); 
         
-        contentCounter.textContent = `Exibindo ${resultsContainer.children.length} de ${totalItems} notícias.`; 
+        if (currentRadarView !== 'paraSi' || followedTopics.length > 0) {
+            contentCounter.textContent = `Exibindo ${resultsContainer.children.length} de ${totalItems} notícias.`; 
+        }
         isLoadingMore = false; 
     }
     
@@ -482,12 +591,16 @@
         const mediaTag = `<span class="text-lg text-slate-300 ml-1 has-tooltip" data-tooltip="${mediaInfo.label}">${mediaInfo.emoji}</span>`;
         const entities = extractEntities(news.title);
         const entitiesHTML = entities.length > 0 ? `<div class="flex flex-wrap gap-1 mt-3">${entities.map(e => `<span class="entity-tag">${e}</span>`).join('')}</div>` : '';
-        const borderColorClass = colors.border;
-        const categoryHTML = `<span class="text-xs font-medium ${colors.tagBg} ${colors.tagText} px-2 py-1 rounded-full">${primaryCategory}</span>`;
         
+        const categoryEmojis = { 'Mundo': '🌍' };
+        const emoji = categoryEmojis[primaryCategory] ? `${categoryEmojis[primaryCategory]} ` : '';
+        const categoryHTML = `<span class="text-xs font-medium ${colors.tagBg} ${colors.tagText} px-2 py-1 rounded-full">${emoji}${primaryCategory}</span>`;
+
         const footerLogoHTML = sourceLogoUrl ? `<div class="source-logo-container"><img src="${sourceLogoUrl}" alt="${news.sourceName}" class="source-logo"></div>` : '';
 
-        newsElement.className = `bg-slate-800 border-l-4 ${borderColorClass} rounded-r-lg p-5 shadow-lg flex flex-col transform hover:scale-[1.01] transition-transform duration-300`;
+        newsElement.className = `news-card bg-slate-800 rounded-lg p-5 shadow-lg flex flex-col transform hover:scale-[1.01] transition-transform duration-300`;
+        newsElement.style.setProperty('--category-color', colors.color);
+
         newsElement.innerHTML = `
             <div class="flex justify-between items-center gap-2">
                 <a href="${news.url}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 min-w-0">
@@ -531,36 +644,45 @@
     
     function renderCategories() {
         categoriesContainer.innerHTML = '';
+        const gridContainer = document.createElement('div');
+        gridContainer.className = 'grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-10 gap-3';
+        
+        const title = document.getElementById('categoriesTitle');
+        const subtitle = document.getElementById('categoriesSubtitle');
+        
+        let categoriesToRender = [...mainCategories];
 
-        const row1 = document.createElement('div');
-        row1.className = 'flex flex-wrap justify-center gap-2 mb-2';
-
-        const row2 = document.createElement('div');
-        row2.className = 'flex flex-wrap justify-center gap-2';
+        if (currentRadarView === 'paraSi') {
+            title.textContent = 'Personalize seu Feed';
+            subtitle.textContent = 'Clique para seguir, clique de novo para priorizar, e mais uma vez para remover.';
+            categoriesToRender = categoriesToRender.filter(c => c !== 'Principais');
+        } else {
+            title.textContent = 'Navegue por Editorial';
+            subtitle.textContent = '';
+        }
 
         const createTab = (category) => {
             const tabButton = document.createElement('button');
             const colors = categoryColorMap[category] || categoryColorMap['Outros'];
-            let tabClasses = 'category-tab text-xs font-semibold py-3 w-28 text-center transition-colors duration-200 flex flex-col items-center justify-center';
-
+            
+            tabButton.className = 'topic-card flex flex-col items-center justify-center p-3 rounded-lg border-2 h-24';
+            tabButton.style.setProperty('--category-color', colors.color);
+            tabButton.style.setProperty('--category-color-rgb', colors.rgb);
+            
             if (currentRadarView === 'paraSi') {
                 const followedTopic = followedTopics.find(t => t.topic === category);
                 if (followedTopic) {
-                    tabClasses += followedTopic.priority === 1 ? ' category-priority-text' : ' category-followed-text';
+                    tabButton.classList.add(followedTopic.priority === 1 ? 'state-priority' : 'state-followed');
                 } else {
-                    tabClasses += ' text-slate-400 hover:text-white';
+                    tabButton.classList.add('state-unfollowed');
                 }
             } else {
-                const isActive = (currentCategorySearch === category) || (category === 'Todas' && currentCategorySearch === null);
-                if (isActive) {
-                    tabClasses += ` ${colors.border.replace('border-', 'border-b-')} text-slate-100`;
-                } else {
-                    tabClasses += ` ${colors.tagText} hover:text-slate-200`;
-                }
+                const isActive = (currentCategorySearch === category) || (category === 'Principais' && currentCategorySearch === null);
+                tabButton.classList.add(isActive ? 'active' : 'inactive', 'bg-slate-700/50', 'border-slate-700', 'text-slate-300');
             }
-            tabButton.className = tabClasses;
+            
             const iconSVG = CATEGORY_ICONS[category] || '';
-            tabButton.innerHTML = `${iconSVG}<span>${category}</span>`;
+            tabButton.innerHTML = `${iconSVG}<span class="text-xs text-center font-medium leading-tight">${category}</span>`;
             
             tabButton.dataset.category = category;
             tabButton.onclick = () => {
@@ -568,53 +690,46 @@
                     const topicIndex = followedTopics.findIndex(t => t.topic === category);
                     if (topicIndex > -1) {
                         if (followedTopics[topicIndex].priority === 0) {
-                            followedTopics[topicIndex].priority = 1; showToast(`"${category}" definido como prioridade!`);
+                            followedTopics[topicIndex].priority = 1; 
+                            showToast(`"${category}" definido como prioridade!`);
                         } else {
-                            followedTopics.splice(topicIndex, 1); showToast(`Deixou de seguir "${category}"`);
+                            followedTopics.splice(topicIndex, 1); 
+                            showToast(`Deixou de seguir "${category}"`);
                         }
                     } else {
-                        followedTopics.push({ topic: category, priority: 0 }); showToast(`Agora segue "${category}"`);
+                        followedTopics.push({ topic: category, priority: 0 }); 
+                        showToast(`Agora segue "${category}"`);
                     }
                     localStorage.setItem('followedTopics', JSON.stringify(followedTopics));
                     renderCategories();
                     renderRadarResults();
                 } else {
-                    handleCategoryFilter(category);
+                    const filterCategory = (category === 'Principais') ? null : category;
+                    handleCategoryFilter(filterCategory);
                 }
             };
             return tabButton;
         };
-
-        // Popula a primeira linha (9 botões)
-        row1.appendChild(createTab('Todas'));
-        const firstRowCategories = mainCategories.slice(0, 8);
-        firstRowCategories.forEach(category => row1.appendChild(createTab(category)));
-
-        // Popula a segunda linha (restante)
-        const secondRowCategories = mainCategories.slice(8);
-        secondRowCategories.forEach(category => row2.appendChild(createTab(category)));
-
-        categoriesContainer.appendChild(row1);
-        categoriesContainer.appendChild(row2);
-
+        
+        categoriesToRender.forEach(category => gridContainer.appendChild(createTab(category)));
+        categoriesContainer.appendChild(gridContainer);
         clearFollowedBtn.classList.toggle('hidden', !(currentRadarView === 'paraSi' && followedTopics.length > 0));
     }
 
     function handleCategoryFilter(category) {
-        currentCategorySearch = (category === 'Todas' || category === null) ? null : category;
+        currentCategorySearch = category;
         renderCategories(); 
         renderRadarResults();
     }
     
     function showToast(message) { toastMessage.textContent = message; toast.classList.remove('opacity-0', 'translate-y-20'); toast.classList.add('opacity-100', 'translate-y-0'); setTimeout(() => { toast.classList.add('opacity-0', 'translate-y-20'); toast.classList.remove('opacity-100', 'translate-y-0'); }, 3000); }
-    function setLoading(isLoading, isInitialLoad = true) { const refreshIcon = refreshButton.querySelector('svg'); if (isLoading) { searchButton.disabled = true; buttonText.textContent = "Buscando..."; if (refreshIcon) refreshIcon.classList.add('animate-spin'); if (isInitialLoad) { messageState.classList.add('hidden'); resultsContainer.innerHTML = Array(6).fill(`<div class="bg-slate-800 border-l-4 border-slate-700 rounded-r-lg p-5 shadow-lg flex flex-col gap-4 animate-pulse"><div class="flex justify-between items-start"><div class="flex items-center gap-3 w-1/2"><div class="w-6 h-6 rounded-md bg-slate-700"></div><div class="h-4 bg-slate-700 rounded w-full"></div></div><div class="h-6 w-12 bg-slate-700 rounded-full"></div></div><div><div class="h-5 bg-slate-700 rounded w-full mb-2"></div><div class="h-5 bg-slate-700 rounded w-3/4"></div></div><div class="flex items-center justify-between text-sm mt-auto pt-4 border-t border-slate-700/50"><div class="h-5 w-20 bg-slate-700 rounded-full"></div><div class="h-4 w-24 bg-slate-700 rounded"></div></div></div>`).join(''); } } else { searchButton.disabled = false; buttonText.textContent = "Buscar"; if (refreshIcon) refreshIcon.classList.remove('animate-spin'); } }
+    function setLoading(isLoading, isInitialLoad = true) { const refreshIcon = refreshButton.querySelector('svg'); if (isLoading) { searchButton.disabled = true; buttonText.textContent = "Buscando..."; if (refreshIcon) refreshIcon.classList.add('animate-spin'); if (isInitialLoad) { messageState.classList.add('hidden'); resultsContainer.innerHTML = Array(6).fill(`<div class="bg-slate-800 border-2 border-slate-700 rounded-lg p-5 shadow-lg flex flex-col gap-4 animate-pulse"><div class="flex justify-between items-start"><div class="flex items-center gap-3 w-1/2"><div class="w-6 h-6 rounded-md bg-slate-700"></div><div class="h-4 bg-slate-700 rounded w-full"></div></div><div class="h-6 w-12 bg-slate-700 rounded-full"></div></div><div><div class="h-5 bg-slate-700 rounded w-full mb-2"></div><div class="h-5 bg-slate-700 rounded w-3/4"></div></div><div class="flex items-center justify-between text-sm mt-auto pt-4 border-t border-slate-700/50"><div class="h-5 w-20 bg-slate-700 rounded-full"></div><div class="h-4 w-24 bg-slate-700 rounded"></div></div></div>`).join(''); } } else { searchButton.disabled = false; buttonText.textContent = "Buscar"; if (refreshIcon) refreshIcon.classList.remove('animate-spin'); } }
     async function loadInitialContent(isAutoRefresh = false) { 
         if (!isAutoRefresh) { setLoading(true, true); } 
         let fetchedNews = await fetchFromGoogleNewsAPI(); 
         masterNewsCache = fetchedNews; 
         if (!isAutoRefresh) { setLoading(false, true); } 
-        renderRadarResults(); 
-        updateTimestamp(); 
+        setView(currentRadarView); 
     }
     
     function handleSearch() {
@@ -629,30 +744,19 @@
     function handleScroll() { if (currentAppView === 'radar' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500 && !isLoadingMore) { let listForCounting = masterNewsCache; listForCounting = applyDateFilter(listForCounting, currentDateFilter); const totalItems = applyMediaFilter(listForCounting, currentMediaFilter).length; if (resultsContainer.children.length < totalItems) { isLoadingMore = true; currentPage++; renderRadarResults(true); } } if (window.scrollY > 300) { backToTopBtn.classList.remove('hidden', 'opacity-0', 'translate-y-20'); backToTopBtn.classList.add('opacity-100', 'translate-y-0'); } else { backToTopBtn.classList.add('opacity-0', 'translate-y-20'); setTimeout(() => backToTopBtn.classList.add('hidden'), 300); } }
     
     function setView(view) { 
-        currentAppView = view; 
+        currentRadarView = view;
         [viewFilterRadar, viewFilterForYou].forEach(btn => { 
             btn.classList.remove('view-filter-active'); 
             btn.classList.add('text-slate-300', 'hover:bg-slate-600/50'); 
             btn.setAttribute('aria-pressed', 'false'); 
         }); 
         
-        const secondaryFilters = document.getElementById('secondaryFilters'); 
-        const categoriesSection = document.querySelector('#radarContainer .mb-8'); 
-        categoriesSection.classList.remove('hidden'); 
-        searchBarWrapper.style.display = 'flex'; 
-        secondaryFilters.style.display = 'flex'; 
-        dateFilterContainer.style.display = 'flex'; 
-        
-        if (view === 'radar') { 
-            radarContainer.classList.remove('hidden'); 
-            if (currentRadarView === 'geral') { 
-                viewFilterRadar.classList.add('view-filter-active'); 
-                viewFilterRadar.setAttribute('aria-pressed', 'true'); 
-            } else { 
-                viewFilterForYou.classList.add('view-filter-active'); 
-                viewFilterForYou.setAttribute('aria-pressed', 'true'); 
-            } 
-            handleCategoryFilter(currentCategorySearch);
+        if (currentRadarView === 'geral') { 
+            viewFilterRadar.classList.add('view-filter-active'); 
+            viewFilterRadar.setAttribute('aria-pressed', 'true'); 
+        } else { 
+            viewFilterForYou.classList.add('view-filter-active'); 
+            viewFilterForYou.setAttribute('aria-pressed', 'true'); 
         } 
         
         renderCategories(); 
@@ -664,7 +768,6 @@
         if (storedRondas) {
             rondas = JSON.parse(storedRondas);
         } else {
-            // Se não houver rondas salvas, cria a lista padrão
             rondas = [
                 { name: "Notícias", news: [] },
                 { name: "Entretenimento", news: [] },
@@ -674,7 +777,7 @@
                 { name: "Estilo de Vida", news: [] },
                 { name: "Esportes", news: [] }
             ];
-            saveRondas(); // Salva a lista padrão no localStorage
+            saveRondas();
         }
     }
 
@@ -688,7 +791,7 @@
         const storedTopics = localStorage.getItem('followedTopics'); if (storedTopics) { followedTopics = JSON.parse(storedTopics); }
         if (!localStorage.getItem('hasSeenWelcomeInfo')) { welcomeBanner.classList.remove('hidden'); setTimeout(() => { welcomeBanner.classList.add('hidden') }, 20000); }
         updateMediaDropdown(currentMediaFilter);
-        loadInitialContent().then(() => setView(currentAppView));
+        loadInitialContent();
         
         mediaFilterButton.addEventListener('click', (e) => { e.stopPropagation(); const isExpanded = mediaFilterButton.getAttribute('aria-expanded') === 'true'; mediaFilterButton.setAttribute('aria-expanded', !isExpanded); mediaDropdownMenu.classList.toggle('hidden', isExpanded); mediaDropdownIcon.classList.toggle('rotate-180', !isExpanded); });
         mediaDropdownMenu.querySelectorAll('button').forEach(button => button.addEventListener('click', (e) => handleMediaFilterChange(e.currentTarget.getAttribute('data-media-key'))));
@@ -697,8 +800,8 @@
             if (mediaFilterDropdown && !mediaFilterDropdown.contains(e.target)) { mediaDropdownMenu.classList.add('hidden'); mediaFilterButton.setAttribute('aria-expanded', 'false'); mediaDropdownIcon.classList.remove('rotate-180'); }
         });
 
-        viewFilterRadar.addEventListener('click', () => { currentRadarView = 'geral'; setView('radar'); });
-        viewFilterForYou.addEventListener('click', () => { currentRadarView = 'paraSi'; setView('radar'); });
+        viewFilterRadar.addEventListener('click', () => { setView('geral'); });
+        viewFilterForYou.addEventListener('click', () => { setView('paraSi'); });
         searchButton.addEventListener('click', () => handleSearch());
         searchInput.addEventListener('input', updateClearSearchButton);
         searchInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleSearch(); });
