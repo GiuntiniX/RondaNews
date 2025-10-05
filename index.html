@@ -438,6 +438,16 @@
     };
     
     // --- FUNÇÕES DE ANÁLISE DE CONTEÚDO E UTILIDADE ---
+    function debounce(func, delay) {
+        let timeoutId;
+        return function(...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
+    }
+
     function extractEntities(title) { const words = title.split(' '); const entities = words.filter((word, index) => index > 0 && word.length > 3 && word[0] === word[0].toUpperCase() && isNaN(word)); return [...new Set(entities)]; }
     function determineMediaType(title, url) { const urlLower = url.toLowerCase(); const titleLower = title.toLowerCase(); if (titleLower.includes('galeria') || titleLower.includes('fotos') || titleLower.includes('imagens') || titleLower.includes('infográfico')) return 'imagem'; if (titleLower.includes('vídeo') || titleLower.includes('assista') || titleLower.includes('live') || titleLower.includes('ao vivo') || titleLower.includes('tv')) return 'video'; if (titleLower.includes('podcast') || titleLower.includes('áudio') || titleLower.includes('ouça') || titleLower.includes('cast')) return 'podcast'; if (urlLower.includes('youtube.com') || urlLower.includes('vimeo.com') || urlLower.includes('/videos/') || urlLower.includes('/tv/') || urlLower.includes('globo.com/videos/')) return 'video'; if (urlLower.includes('soundcloud.com') || urlLower.includes('/podcasts/') || urlLower.includes('g1.globo.com/podcast')) return 'podcast'; return 'texto'; }
     function getRelativeDate(timestamp) {
@@ -802,9 +812,22 @@
 
         viewFilterRadar.addEventListener('click', () => { setView('geral'); });
         viewFilterForYou.addEventListener('click', () => { setView('paraSi'); });
-        searchButton.addEventListener('click', () => handleSearch());
-        searchInput.addEventListener('input', updateClearSearchButton);
+        
+        // --- LÓGICA DE BUSCA (AUTOMÁTICA E MANUAL) ---
+        const debouncedSearch = debounce(handleSearch, 400);
+
+        // Evento de clique para o botão de busca (ação imediata)
+        searchButton.addEventListener('click', handleSearch);
+
+        // Busca automática ao digitar
+        searchInput.addEventListener('input', () => {
+            updateClearSearchButton();
+            debouncedSearch();
+        });
+        
+        // Busca com a tecla Enter (ação imediata)
         searchInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleSearch(); });
+        
         clearSearchBtn.addEventListener('click', () => { searchInput.value = ''; updateClearSearchButton(); renderRadarResults(); });
         dateFilterToday.addEventListener('click', (e) => handleDateFilterChange('hoje', e.currentTarget));
         dateFilterLastWeek.addEventListener('click', (e) => handleDateFilterChange('ultima_semana', e.currentTarget));
